@@ -3,7 +3,7 @@ use regex::Regex;
 
 // TODO: Implement unwrapping, to run before wrapping.
 
-pub fn wrap_lines(lines: &Vec<&str>, column_length: u8) -> Vec<String> {
+pub fn wrap_lines(lines: Vec<&str>, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
     println!(
         "We're dealing with {} lines total, and wrapping to {} characters",

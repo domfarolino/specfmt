@@ -67,7 +67,7 @@ fn main() {
     let lines: Vec<&str> = file_as_string.split("\n").collect();
 
     // Initiate unwrapping/rewrapping.
-    let wrapped_lines = rewrapper::wrap_lines(&lines, column_length);
+    let wrapped_lines = rewrapper::wrap_lines(lines, column_length);
 
     // Join all lines and write to file.
     let file_as_string = wrapped_lines.join("\n");
@@ -94,7 +94,7 @@ mod test {
         let lines: Vec<&str> = in_string.split("\n").collect();
 
         // Initiate unwrapping/rewrapping.
-        let wrapped_lines = rewrapper::wrap_lines(&lines, 100);
+        let wrapped_lines = rewrapper::wrap_lines(lines, 100);
         let file_as_string: String = wrapped_lines.join("\n");
         assert_eq!(file_as_string, out_string);
     }
