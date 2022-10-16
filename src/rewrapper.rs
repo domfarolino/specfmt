@@ -20,8 +20,8 @@ pub fn wrap_lines(lines: &Vec<&str>, column_length: u8) -> Vec<String> {
 }
 
 fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
-    lazy_static!{
-       static ref REGEX: Regex = Regex::new(r"^(\s*)").unwrap();
+    lazy_static! {
+        static ref REGEX: Regex = Regex::new(r"^(\s*)").unwrap();
     }
 
     let mut return_lines = Vec::<String>::new();
@@ -47,5 +47,5 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
     }
 
     return_lines.push(current_line);
-    return_lines 
+    return_lines
 }

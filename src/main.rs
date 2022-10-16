@@ -1,10 +1,10 @@
 use std::fs::File;
 use std::fs::OpenOptions;
-use std::io::Write;
 use std::io;
 use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
+use std::io::Write;
 
 // Adapted from the web version of the original rewrapper
 // (https://github.com/domenic/rewrapper).
@@ -12,8 +12,11 @@ use std::io::SeekFrom;
 mod rewrapper;
 
 fn read_file(filename: &str) -> Result<(File, String), io::Error> {
-    let mut file =
-        OpenOptions::new().read(true).write(true).append(false).open(filename)?;
+    let mut file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .append(false)
+        .open(filename)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
     Ok((file, contents))
@@ -34,7 +37,7 @@ fn main() {
         Ok((file, string)) => {
             println!("Successfully read file '{}'", filename);
             (file, string)
-        },
+        }
         Err(error) => panic!("Error opening file '{}': {:?}", filename, error),
     };
 
@@ -73,4 +76,3 @@ mod test {
         assert_eq!(file_as_string, out_string);
     }
 }
-
