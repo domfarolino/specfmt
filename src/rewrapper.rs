@@ -1,9 +1,51 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
-// TODO: Implement unwrapping, to run before wrapping.
+pub fn rewrap_lines(lines: Vec<&str>, column_length: u8) -> Vec<String> {
+    let unwrapped_lines: Vec<String> = unwrap_lines(lines);
+    wrap_lines(unwrapped_lines, column_length)
+}
 
-pub fn wrap_lines(lines: Vec<&str>, column_length: u8) -> Vec<String> {
+fn unwrap_lines(lines: Vec<&str>) -> Vec<String> {
+    let mut return_lines = Vec::<String>::new();
+    let mut previous_line_smushable = false;
+
+    for line in lines {
+        if is_standalone_line(line.trim()) {
+            return_lines.push(line.to_string());
+            previous_line_smushable = false;
+        } else {
+            // The *previous* line is not a standalone line, so if it's a
+            // candidate for accepting text from subsequent lines and beyond,
+            // then do just that, by extending the last entry in `return_lines`
+            // with `line`.
+            if previous_line_smushable == true {
+                assert_ne!(return_lines.len(), 0);
+                let n = return_lines.len();
+                return_lines[n - 1].push_str(&(" ".to_owned() + line.trim()));
+            } else {
+                // TODO(domfarolino): I think we can remove this path, simplifying it like `wrap_single_line()`.
+                return_lines.push(line.to_string());
+                previous_line_smushable = true;
+            }
+        }
+    }
+
+    return_lines
+}
+
+fn is_standalone_line(line: &str) -> bool {
+    lazy_static! {
+        static ref SINGLE_TAG: Regex = Regex::new(r#"^</?[a-z-A-Z "=]+>$"#).unwrap();
+    }
+    lazy_static! {
+        static ref FULL_LI_TAG: Regex = Regex::new(r#"<li.*>.*</li>$"#).unwrap();
+    }
+
+    line.len() == 0 || SINGLE_TAG.is_match(line) || FULL_LI_TAG.is_match(line)
+}
+
+fn wrap_lines(lines: Vec<String>, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
     println!(
         "We're dealing with {} lines total, and wrapping to {} characters",
