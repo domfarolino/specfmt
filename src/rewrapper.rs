@@ -5,7 +5,11 @@ use regex::Regex;
 
 pub fn wrap_lines(lines: &Vec<&str>, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
-    println!("We're dealing with {} lines total", lines.len());
+    println!(
+        "We're dealing with {} lines total, and wrapping to {} characters",
+        lines.len(),
+        column_length
+    );
 
     let mut rewrapped_lines: Vec<String> = Vec::new();
     for line in lines.iter() {

@@ -1,3 +1,4 @@
+use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io;
@@ -30,10 +31,32 @@ fn write_file(mut file: File, contents: String) -> Result<u8, io::Error> {
     Ok(0)
 }
 
+fn print_help() {
+    println!("Usage: specfmt [filename] [--wrap=column_length]");
+}
+
 fn main() {
-    let filename: &str = "source";
-    let column_length: u8 = 100;
-    let (file, file_as_string): (File, String) = match read_file(filename) {
+    // Default command line parameters.
+    let mut filename = String::from("source");
+    let mut column_length: u8 = 100;
+
+    // Command line processing.
+    let mut args: Vec<String> = env::args().collect();
+    // Drain the first argument (the `specfmt` binary).
+    args.drain(0..1);
+    for arg in args {
+        if arg == "help" {
+            print_help();
+            return;
+        } else if arg.starts_with("--wrap=") {
+            let wrap: Vec<&str> = arg.split("=").collect();
+            column_length = wrap[1].parse().unwrap();
+        } else if !arg.starts_with("--") {
+            filename = arg.clone();
+        }
+    }
+
+    let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
             println!("Successfully read file '{}'", filename);
             (file, string)
