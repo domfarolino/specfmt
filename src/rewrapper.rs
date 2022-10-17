@@ -2,8 +2,29 @@ use lazy_static::lazy_static;
 use regex::Regex;
 
 pub fn rewrap_lines(lines: Vec<&str>, column_length: u8) -> Vec<String> {
+    println!("- - The Great Rewrapper - -");
+    println!(
+        "We're dealing with {} lines total, and wrapping to {} characters",
+        lines.len(),
+        column_length
+    );
     let unwrapped_lines: Vec<String> = unwrap_lines(lines);
     wrap_lines(unwrapped_lines, column_length)
+}
+
+// Helpers.
+lazy_static! {
+    static ref SINGLE_TAG: Regex = Regex::new(r#"^</?[a-z-A-Z "=]+>$"#).unwrap();
+    static ref FULL_DT_TAG: Regex = Regex::new(r#"<dt.*>.*</dt>$"#).unwrap();
+}
+fn is_standalone_line(line: &str) -> bool {
+    line.len() == 0 || SINGLE_TAG.is_match(line) || FULL_DT_TAG.is_match(line)
+}
+fn must_break(line: &str) -> bool {
+    line.ends_with("</li>") || line.ends_with("</dt>")
+}
+fn exempt_from_wrapping(line: &str) -> bool {
+    FULL_DT_TAG.is_match(line)
 }
 
 fn unwrap_lines(lines: Vec<&str>) -> Vec<String> {
@@ -15,47 +36,25 @@ fn unwrap_lines(lines: Vec<&str>) -> Vec<String> {
             return_lines.push(line.to_string());
             previous_line_smushable = false;
         } else {
-            // The *previous* line is not a standalone line, so if it's a
-            // candidate for accepting text from subsequent lines and beyond,
-            // then do just that, by extending the last entry in `return_lines`
-            // with `line`.
             if previous_line_smushable == true {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
                 return_lines[n - 1].push_str(&(" ".to_owned() + line.trim()));
             } else {
-                // TODO(domfarolino): I think we can remove this path, simplifying it like `wrap_single_line()`.
                 return_lines.push(line.to_string());
-                previous_line_smushable = true;
             }
+
+            previous_line_smushable = !must_break(line);
         }
     }
 
     return_lines
 }
 
-fn is_standalone_line(line: &str) -> bool {
-    lazy_static! {
-        static ref SINGLE_TAG: Regex = Regex::new(r#"^</?[a-z-A-Z "=]+>$"#).unwrap();
-    }
-    lazy_static! {
-        static ref FULL_LI_TAG: Regex = Regex::new(r#"<li.*>.*</li>$"#).unwrap();
-    }
-
-    line.len() == 0 || SINGLE_TAG.is_match(line) || FULL_LI_TAG.is_match(line)
-}
-
 fn wrap_lines(lines: Vec<String>, column_length: u8) -> Vec<String> {
-    println!("- - The Great Rewrapper - -");
-    println!(
-        "We're dealing with {} lines total, and wrapping to {} characters",
-        lines.len(),
-        column_length
-    );
-
     let mut rewrapped_lines: Vec<String> = Vec::new();
     for line in lines.iter() {
-        if line.len() <= column_length.into() {
+        if line.len() <= column_length.into() || exempt_from_wrapping(line) {
             rewrapped_lines.push(line.to_string());
         } else {
             rewrapped_lines.append(&mut wrap_single_line(&line, column_length));
