@@ -1,4 +1,4 @@
-use std::env;
+use clap::Parser;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io;
@@ -31,30 +31,22 @@ fn write_file(mut file: File, contents: String) -> Result<u8, io::Error> {
     Ok(0)
 }
 
-fn print_help() {
-    println!("Usage: specfmt [filename] [--wrap=column_length]");
+/// Formats Bikeshed and Wattsi specifications using WHATWG conventions.
+#[derive(Parser, Debug)]
+#[command(version)]
+struct Args {
+    /// The specification to reformat.
+    #[arg(default_value = "source")]
+    filename: String,
+
+    /// Number of columns to wrap to.
+    #[arg(default_value_t = 100)]
+    wrap: u8,
 }
 
 fn main() {
-    // Default command line parameters.
-    let mut filename = String::from("source");
-    let mut column_length: u8 = 100;
-
-    // Command line processing.
-    let mut args: Vec<String> = env::args().collect();
-    // Drain the first argument (the `specfmt` binary).
-    args.drain(0..1);
-    for arg in args {
-        if arg == "help" {
-            print_help();
-            return;
-        } else if arg.starts_with("--wrap=") {
-            let wrap: Vec<&str> = arg.split("=").collect();
-            column_length = wrap[1].parse().unwrap();
-        } else if !arg.starts_with("--") {
-            filename = arg.clone();
-        }
-    }
+    let args = Args::parse();
+    let filename = args.filename;
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
@@ -67,7 +59,7 @@ fn main() {
     let lines: Vec<&str> = file_as_string.split("\n").collect();
 
     // Initiate unwrapping/rewrapping.
-    let rewrapped_lines = rewrapper::rewrap_lines(lines, column_length);
+    let rewrapped_lines = rewrapper::rewrap_lines(lines, args.wrap);
 
     // Join all lines and write to file.
     let file_as_string = rewrapped_lines.join("\n");
