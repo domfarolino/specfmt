@@ -1,4 +1,6 @@
+use clap::CommandFactory;
 use clap::Parser;
+use std::fs::read_dir;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io;
@@ -6,13 +8,15 @@ use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
+use std::path::Path;
+use std::path::PathBuf;
 
 // Adapted from the web version of the original rewrapper
 // (https://github.com/domenic/rewrapper).
 
 mod rewrapper;
 
-fn read_file(filename: &str) -> Result<(File, String), io::Error> {
+fn read_file(filename: &Path) -> Result<(File, String), io::Error> {
     let mut file = OpenOptions::new()
         .read(true)
         .write(true)
@@ -35,25 +39,59 @@ fn write_file(mut file: File, contents: String) -> Result<u8, io::Error> {
 #[derive(Parser, Debug)]
 #[command(version)]
 struct Args {
-    /// The specification to reformat.
-    #[arg(default_value = "source")]
-    filename: String,
+    /// The specification to reformat. Defaults to "source" or the unique .bs
+    /// file in the current directory.
+    filename: Option<String>,
 
     /// Number of columns to wrap to.
-    #[arg(default_value_t = 100)]
+    #[arg(long, default_value_t = 100)]
     wrap: u8,
+}
+
+fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Error> {
+    if let Some(filename) = filename {
+        return Ok(PathBuf::from(filename));
+    }
+    if Path::new("source").exists() {
+        return Ok(PathBuf::from("source"));
+    }
+    if let Ok(entries) = read_dir(".") {
+        let bs_files: Vec<PathBuf> = entries
+            .filter_map(Result::ok)
+            .map(|entry| entry.path())
+            .filter(|path| {
+                if let Some(ext) = path.extension() {
+                    return ext == "bs";
+                }
+                false
+            })
+            .collect();
+        if bs_files.len() == 1 {
+            return Ok(bs_files[0].clone());
+        }
+        if bs_files.len() > 1 {
+            return Err(Args::command().error(
+                clap::error::ErrorKind::MissingRequiredArgument,
+                "Must specify filename: directory contains multiple .bs files",
+            ));
+        }
+    }
+    Err(Args::command().error(
+        clap::error::ErrorKind::MissingRequiredArgument,
+        "Must specify filename: directory doesn't contain \"source\" or .bs spec",
+    ))
 }
 
 fn main() {
     let args = Args::parse();
-    let filename = args.filename;
+    let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
-            println!("Successfully read file '{}'", filename);
+            println!("Successfully read file '{}'", filename.display());
             (file, string)
         }
-        Err(error) => panic!("Error opening file '{}': {:?}", filename, error),
+        Err(error) => panic!("Error opening file '{}': {:?}", filename.display(), error),
     };
 
     let lines: Vec<&str> = file_as_string.split("\n").collect();
@@ -65,7 +103,7 @@ fn main() {
     let file_as_string = rewrapped_lines.join("\n");
     match write_file(file, file_as_string) {
         Ok(_) => println!("Write succeeded"),
-        Err(error) => panic!("Error writing file '{}': {:?}", filename, error),
+        Err(error) => panic!("Error writing file '{}': {:?}", filename.display(), error),
     }
 }
 
@@ -76,12 +114,12 @@ mod test {
     use test_generator::test_resources;
     #[test_resources("testcases/*.in.html")]
     fn verify_resource(input: &str) {
-        assert!(std::path::Path::new(input).exists());
+        assert!(Path::new(input).exists());
         let output = input.replace("in.html", "out.html");
-        assert!(std::path::Path::new(&output).exists());
+        assert!(Path::new(&output).exists());
 
-        let (_in_file, in_string) = read_file(input).unwrap();
-        let (_out_file, out_string) = read_file(&output).unwrap();
+        let (_in_file, in_string) = read_file(Path::new(input)).unwrap();
+        let (_out_file, out_string) = read_file(Path::new(&output)).unwrap();
 
         let lines: Vec<&str> = in_string.split("\n").collect();
 
