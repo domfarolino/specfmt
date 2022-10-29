@@ -49,13 +49,25 @@ struct Args {
 }
 
 fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Error> {
+    let mut directory = String::from(".");
     if let Some(filename) = filename {
-        return Ok(PathBuf::from(filename));
+        let path = PathBuf::from(filename);
+        // If you pass in a file, we simply try to use it.
+        if path.is_file() {
+            return Ok(path);
+        }
+
+        // If you pass in a directory, we use that as the base for starting our
+        // search for the appropriate spec file.
+        assert!(path.is_dir());
+        directory = String::from(path.to_str().unwrap());
     }
-    if Path::new("source").exists() {
-        return Ok(PathBuf::from("source"));
+
+    let source_path = directory.clone() + "/source";
+    if Path::new(&source_path).exists() {
+        return Ok(PathBuf::from(&source_path));
     }
-    if let Ok(entries) = read_dir(".") {
+    if let Ok(entries) = read_dir(directory) {
         let bs_files: Vec<PathBuf> = entries
             .filter_map(Result::ok)
             .map(|entry| entry.path())
