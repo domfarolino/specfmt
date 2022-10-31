@@ -94,13 +94,11 @@ fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Er
     ))
 }
 
-fn assert_no_uncommitted_changes(mut path: PathBuf) -> Result<(), clap::error::Error> {
+fn assert_no_uncommitted_changes(path: PathBuf) -> Result<(), clap::error::Error> {
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
-    let filename_without_path = String::from(path.file_name().unwrap().to_str().unwrap());
-    path.pop();
-    assert!(path.is_dir());
-    let directory = path.to_str().unwrap();
+    let filename_without_path = path.file_name().unwrap().to_str().unwrap();
+    let directory: &str = path.parent().unwrap().to_str().unwrap();
 
     let output = if cfg!(target_os = "windows") {
         std::process::Command::new("cmd")
