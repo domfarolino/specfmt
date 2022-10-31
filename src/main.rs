@@ -118,8 +118,8 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
 
     let git_status = String::from_utf8_lossy(&output.stdout);
 
-    // This implies that the spec we're targeting as no uncommitted changes, and
-    // so we're safe to proceed with rewrapping.
+    // This implies that the spec we're targeting has no uncommitted changes,
+    // and so we're safe to proceed with rewrapping.
     if !git_status.contains(&filename_without_path) {
         return Ok(());
     }
