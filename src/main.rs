@@ -52,14 +52,14 @@ fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Er
     let mut directory = String::from(".");
     if let Some(filename) = filename {
         let path = PathBuf::from(filename);
-        // If you pass in a file, we simply try to use it.
+        // If you pass in a file, we simply use it.
         if path.is_file() {
             return Ok(path);
         }
 
-        // If you pass in a directory, we use that as the base for starting our
-        // search for the appropriate spec file.
-        assert!(path.is_dir());
+        // If you pass in something else (a valid directory, or something that
+        // does not exist), then we'll use that that as the base for our search
+        // for the appropriate spec file.
         directory = String::from(path.to_str().unwrap());
     }
 
