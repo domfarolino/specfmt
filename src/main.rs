@@ -94,7 +94,7 @@ fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Er
     ))
 }
 
-fn assert_no_uncommitted_changes(path: PathBuf) -> Result<(), clap::error::Error> {
+fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Error> {
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
     let filename_without_path = path.file_name().unwrap().to_str().unwrap();
@@ -134,7 +134,7 @@ fn main() {
     let args = Args::parse();
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
 
-    assert_no_uncommitted_changes(filename.clone()).unwrap_or_else(|err| err.exit());
+    assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
