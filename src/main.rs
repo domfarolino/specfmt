@@ -98,7 +98,7 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
     let filename_without_path = path.file_name().unwrap().to_str().unwrap();
-    let directory: &str = path.parent().unwrap().to_str().unwrap();
+    let directory = path.parent().unwrap().to_str().unwrap();
 
     let output = if cfg!(target_os = "windows") {
         std::process::Command::new("cmd")
