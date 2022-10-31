@@ -94,9 +94,49 @@ fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Er
     ))
 }
 
+fn assert_no_uncommitted_changes(mut path: PathBuf) -> Result<(), clap::error::Error> {
+    // Extract the filename itself, as well as the directory from `path`.
+    assert!(path.is_file());
+    let filename_without_path = String::from(path.file_name().unwrap().to_str().unwrap());
+    path.pop();
+    assert!(path.is_dir());
+    let directory = path.to_str().unwrap();
+
+    let output = if cfg!(target_os = "windows") {
+        std::process::Command::new("cmd")
+            .args([
+                "/C",
+                format!("cd {}; git status --porcelain", directory).as_str(),
+            ])
+            .output()
+            .expect("Failed to run `git status`")
+    } else {
+        std::process::Command::new("sh")
+            .arg("-c")
+            .arg(format!("cd {}; git status --porcelain", directory).as_str())
+            .output()
+            .expect("Failed to run `git status`")
+    };
+
+    let git_status = String::from_utf8_lossy(&output.stdout);
+
+    // This implies that the spec we're targeting as no uncommitted changes, and
+    // so we're safe to proceed with rewrapping.
+    if !git_status.contains(&filename_without_path) {
+        return Ok(());
+    }
+    Err(Args::command().error(
+        clap::error::ErrorKind::ValueValidation,
+        "Spec must not have uncommitted changes to perform rewrapping. Please
+        commit your changes and try again.",
+    ))
+}
+
 fn main() {
     let args = Args::parse();
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
+
+    assert_no_uncommitted_changes(filename.clone()).unwrap_or_else(|err| err.exit());
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
