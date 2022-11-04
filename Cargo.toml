@@ -2,6 +2,11 @@
 name = "specfmt"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/domfarolino/specfmt"
+keywords = ["whatwg", "w3c", "web specification", "web standard", "bikeshed"]
+categories = ["command-line-utilities", "web-programming"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
