@@ -100,21 +100,14 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
     let filename_without_path = path.file_name().unwrap().to_str().unwrap();
     let directory = path.parent().unwrap().to_str().unwrap();
 
-    let output = if cfg!(target_os = "windows") {
-        std::process::Command::new("cmd")
-            .args([
-                "/C",
-                &format!("cd {}; git status --porcelain", directory),
-            ])
-            .output()
-            .expect("Failed to run `git status`")
-    } else {
-        std::process::Command::new("sh")
-            .arg("-c")
-            .arg(format!("cd {}; git status --porcelain", directory).as_str())
-            .output()
-            .expect("Failed to run `git status`")
-    };
+    let output = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .arg("status")
+        .arg("--porcelain")
+        .arg(filename_without_path)
+        .output()
+        .expect("Failed to run `git status");
 
     let git_status = String::from_utf8_lossy(&output.stdout);
 
@@ -125,8 +118,7 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
     }
     Err(Args::command().error(
         clap::error::ErrorKind::ValueValidation,
-        "Spec must not have uncommitted changes to perform rewrapping. Please
-        commit your changes and try again.",
+        "Spec has uncommitted changes. Please commit your changes and try again.",
     ))
 }
 
