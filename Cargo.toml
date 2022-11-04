@@ -3,6 +3,7 @@ name = "specfmt"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+description = "Command line tool to format Bikeshed and Wattsi specifications using WHATWG conventions"
 readme = "README.md"
 repository = "https://github.com/domfarolino/specfmt"
 keywords = ["whatwg", "w3c", "web specification", "web standard", "bikeshed"]
