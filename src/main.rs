@@ -104,7 +104,7 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
         std::process::Command::new("cmd")
             .args([
                 "/C",
-                format!("cd {}; git status --porcelain", directory).as_str(),
+                &format!("cd {}; git status --porcelain", directory),
             ])
             .output()
             .expect("Failed to run `git status`")
