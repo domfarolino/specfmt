@@ -97,8 +97,8 @@ fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Er
 fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Error> {
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
-    let filename_without_path = path.file_name().unwrap().to_str().unwrap();
-    let directory = path.parent().unwrap().to_str().unwrap();
+    let filename_without_path = path.file_name().unwrap();
+    let directory = path.parent().unwrap();
 
     let output = std::process::Command::new("git")
         .arg("-C")
@@ -109,11 +109,9 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
         .output()
         .expect("Failed to run `git status");
 
-    let git_status = String::from_utf8_lossy(&output.stdout);
-
-    // This implies that the spec we're targeting has no uncommitted changes,
-    // and so we're safe to proceed with rewrapping.
-    if !git_status.contains(&filename_without_path) {
+    // This means that the spec we're targeting does not have uncommitted
+    // changes, so we're safe to proceed with rewrapping.
+    if output.stdout.is_empty() {
         return Ok(());
     }
     Err(Args::command().error(
