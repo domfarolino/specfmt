@@ -124,6 +124,80 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
     ))
 }
 
+fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
+    // Extract the filename itself, as well as the directory from `path`.
+    assert!(path.is_file());
+    let filename_without_path = path.file_name().unwrap().to_str().unwrap();
+    let directory = path.parent().unwrap().to_str().unwrap();
+
+    // Get the name of the git branch that the spec is currently on.
+    let current_branch = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .arg("branch")
+        .arg("--show-current")
+        .output()
+        .expect("Failed to run `git branch --show-current`");
+
+    let current_branch = String::from_utf8(current_branch.stdout).unwrap();
+    let current_branch = current_branch.trim();
+
+    // Get the base branch to compare `current_branch` to with in `git diff`. We
+    // expect it to be either `master` or `main`, and fail otherwise.
+    let branches = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .arg("for-each-ref")
+        .arg("--format=%(refname:short)")
+        .output()
+        .expect("Failed to find the base branch to compare current branch '${}' with");
+
+    let branches = String::from_utf8(branches.stdout).unwrap();
+    let branches = branches.split('\n');
+    let mut base_branch: &str = "";
+    for branch in branches {
+        if branch == "master" {
+            base_branch = branch;
+            break;
+        } else if branch == "main" {
+            base_branch = branch;
+            break;
+        }
+    }
+
+    // Could not find a branch named `master` or `main`. This configuration is
+    // considered invalid.
+    if base_branch == "" {
+        return Err(Args::command().error(
+            clap::error::ErrorKind::ValueValidation,
+            "Cannot find a 'master' or 'main' base branch with which to compare the current branch of the spec",
+        ));
+    }
+
+    // Finally, compute the diff between `current_branch` and `base_branch`.
+    // Return the diff so we can inform the rewrapper of which lines to scope
+    // its changes to (as to avoid rewrapping the *entire* spec).
+    let git_diff = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .arg("diff")
+        .arg(base_branch)
+        .arg(current_branch)
+        .arg(filename_without_path)
+        .output()
+        .expect("Failed to run `git branch --show-current`");
+
+    let status = git_diff.status.code().unwrap();
+    if status != 0 {
+        return Err(Args::command().error(
+            clap::error::ErrorKind::ValueValidation,
+            format!("Failed to compute diff between branches '{}' and '{}'. Git exit code: {}", current_branch, base_branch, status),
+        ));
+    }
+
+    Ok(String::from_utf8(git_diff.stdout).unwrap())
+}
+
 fn main() {
     let args = Args::parse();
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
@@ -131,6 +205,10 @@ fn main() {
     if !args.ignore_uncommitted_changes {
       assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
     }
+
+    let diff = git_diff(&filename).unwrap_or_else(|err| err.exit());
+    println!("{}", diff);
+    // let diff = sanitize_diff(&diff);
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
