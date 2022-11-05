@@ -1,15 +1,16 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn rewrap_lines(lines: Vec<&str>, column_length: u8) -> Vec<String> {
+pub fn rewrap_lines(lines: Vec<&str>, diff: Vec<&str>, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
     println!(
-        "We're dealing with {} lines total, and wrapping to {} characters",
+        "The spec has {} lines total. We'll try to wrap {} lines to {} characters",
         lines.len(),
+        diff.len(),
         column_length
     );
-    let unwrapped_lines: Vec<String> = unwrap_lines(lines);
-    wrap_lines(unwrapped_lines, column_length)
+    let unwrapped_lines: Vec<String> = unwrap_lines(lines, &diff);
+    wrap_lines(unwrapped_lines, &diff, column_length)
 }
 
 // Helpers.
@@ -27,7 +28,7 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-fn unwrap_lines(lines: Vec<&str>) -> Vec<String> {
+fn unwrap_lines(lines: Vec<&str>, diff: &Vec<&str>) -> Vec<String> {
     let mut return_lines = Vec::<String>::new();
     let mut previous_line_smushable = false;
 
@@ -36,7 +37,7 @@ fn unwrap_lines(lines: Vec<&str>) -> Vec<String> {
             return_lines.push(line.to_string());
             previous_line_smushable = false;
         } else {
-            if previous_line_smushable == true {
+            if previous_line_smushable == true && diff.contains(&line.trim()) {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
                 return_lines[n - 1].push_str(&(" ".to_owned() + line.trim()));
@@ -51,10 +52,10 @@ fn unwrap_lines(lines: Vec<&str>) -> Vec<String> {
     return_lines
 }
 
-fn wrap_lines(lines: Vec<String>, column_length: u8) -> Vec<String> {
+fn wrap_lines(lines: Vec<String>, diff: &Vec<&str>, column_length: u8) -> Vec<String> {
     let mut rewrapped_lines: Vec<String> = Vec::new();
     for line in lines.iter() {
-        if line.len() <= column_length.into() || exempt_from_wrapping(line) {
+        if line.len() <= column_length.into() || exempt_from_wrapping(line) || !diff.contains(&(line.as_str())) {
             rewrapped_lines.push(line.to_string());
         } else {
             rewrapped_lines.append(&mut wrap_single_line(&line, column_length));
