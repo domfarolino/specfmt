@@ -30,6 +30,9 @@ fn exempt_from_wrapping(line: &str) -> bool {
 }
 
 fn unwrap_lines(lines: Vec<Line>) -> Vec<(bool, String)> {
+    // TODO(domfarolino): We should be returning something like a `Vec<Line>`
+    // here, but with owned strings (if necessary, as we currently have it)
+    // instead of string slices. The tuple is a little opaque.
     let mut return_lines = Vec::<(bool, String)>::new();
     let mut previous_line_smushable = false;
 
@@ -41,11 +44,13 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<(bool, String)> {
             if previous_line_smushable == true && line.should_format {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
-                // TODO(domfarolino): Document this.
+                // If we're unwrapping this line by tacking it onto the end of
+                // the previous one, we have to mark the previous line as a
+                // candidate for formatting (it might not already be).
                 return_lines[n - 1].0 = true;
                 return_lines[n - 1]
                     .1
-                    .push_str(&(" ".to_owned() + line.contents.trim()));
+                    .push_str(&(String::from(" ") + line.contents.trim()));
             } else {
                 return_lines.push((line.should_format, line.contents.to_string()));
             }
