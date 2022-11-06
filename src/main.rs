@@ -210,6 +210,10 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
 }
 
 fn apply_diff(lines: &mut Vec<(bool, &str)>, diff: &Vec<&str>) {
+    if diff.len() == 0 {
+      return;
+    }
+
     let mut i = 1;
     for tuple in lines {
         if tuple.1.trim() == diff[i].trim() {
