@@ -292,10 +292,8 @@ fn main() {
         Err(error) => panic!("Error opening file '{}': {:?}", filename.display(), error),
     };
 
-    let lines: Vec<&str> = file_as_string.split("\n").collect();
-    let mut lines: Vec<Line> = lines
-        .iter()
-        .map(|&line_contents| Line {
+    let mut lines: Vec<Line> = file_as_string.split("\n")
+        .map(|line_contents| Line {
             should_format: args.full_spec,
             contents: line_contents,
         })
