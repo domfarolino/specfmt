@@ -137,6 +137,9 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
     ))
 }
 
+// If there are no errors, this returns the computed diff of the target spec's
+// current branch and base branch (master or main). The output should be
+// filtered by `sanitized_diff_lines()`.
 fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
@@ -200,12 +203,17 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
     Ok(String::from_utf8(git_diff.stdout).unwrap())
 }
 
+// Takes the `String` output of `git_diff` above, and filters out irrelevant
+// lines. Cannot be a part of `git_diff` because this returns a vector of string
+// slices (for efficiency) on top of strings allocated inside of `git_diff`.
 fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
     diff.split("\n")
-        // Only consider lines that start with "+" and more than one character.
-        .filter(|line| line.starts_with("+") && line.len() > 1)
+        .enumerate()
+        // Strip the first 5 version control lines, and only consider lines
+        // prefixed with "+" that are more than one character long.
+        .filter(|&(i, line)| i > 4 && line.starts_with("+") && line.len() > 1)
         // Remove the "+" version control prefix.
-        .map(|e| &e[1..])
+        .map(|(_, line)| &line[1..])
         .collect()
 }
 
@@ -240,8 +248,6 @@ fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<&str>) {
     }
 
     let mut iter = diff.iter().peekable();
-    // TODO(domfarolino): Remove this once we sanitize the `diff` better.
-    iter.next(); // Skip the first bogus line.
     for line in lines {
         if line.contents == **iter.peek().unwrap() {
             line.should_format = true;
@@ -267,9 +273,7 @@ fn main() {
     } else {
         String::from("")
     };
-
     let diff = sanitized_diff_lines(&diff);
-    // println!("{:#?}", diff);
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
