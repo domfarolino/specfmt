@@ -197,18 +197,6 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
         .output()
         .expect("Failed to compute `git diff`");
 
-    // TODO(domfarolino): See if there is a better way to do this.
-    let status = git_diff.status.code().unwrap();
-    if status != 0 {
-        return Err(Args::command().error(
-            clap::error::ErrorKind::ValueValidation,
-            format!(
-                "Failed to compute diff between branches '{}' and '{}'. Git exit code: {}",
-                current_branch, base_branch, status
-            ),
-        ));
-    }
-
     Ok(String::from_utf8(git_diff.stdout).unwrap())
 }
 
