@@ -42,7 +42,9 @@ fn unwrap_lines(lines: Vec<(bool, &str)>) -> Vec<(bool, String)> {
                 let n = return_lines.len();
                 // TODO(domfarolino): Document this.
                 return_lines[n - 1].0 = true;
-                return_lines[n - 1].1.push_str(&(" ".to_owned() + line.trim()));
+                return_lines[n - 1]
+                    .1
+                    .push_str(&(" ".to_owned() + line.trim()));
             } else {
                 return_lines.push((should_format, line.to_string()));
             }

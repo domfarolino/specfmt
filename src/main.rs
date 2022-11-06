@@ -196,7 +196,10 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
     if status != 0 {
         return Err(Args::command().error(
             clap::error::ErrorKind::ValueValidation,
-            format!("Failed to compute diff between branches '{}' and '{}'. Git exit code: {}", current_branch, base_branch, status),
+            format!(
+                "Failed to compute diff between branches '{}' and '{}'. Git exit code: {}",
+                current_branch, base_branch, status
+            ),
         ));
     }
 
@@ -204,7 +207,8 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
 }
 
 fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
-    let lines: Vec<&str>= diff.split("\n")
+    let lines: Vec<&str> = diff
+        .split("\n")
         // Only consider lines that start with "+" and more than one character.
         .filter(|line| line.starts_with("+") && line.len() > 1)
         // Remove the "+" version control prefix.
@@ -240,21 +244,21 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
 // line number.
 fn apply_diff(lines: &mut Vec<(bool, &str)>, diff: &Vec<&str>) {
     if diff.len() == 0 {
-      return;
+        return;
     }
 
     let mut iter = diff.iter().peekable();
     // TODO(domfarolino): Remove this once we sanitize the `diff` better.
     iter.next(); // Skip the first bogus line.
     for line in lines {
-      if line.1 == **iter.peek().unwrap() {
-        line.0 = true;
-        iter.next();
-      }
+        if line.1 == **iter.peek().unwrap() {
+            line.0 = true;
+            iter.next();
+        }
 
-      if iter.peek() == None {
-        break;
-      }
+        if iter.peek() == None {
+            break;
+        }
     }
 }
 
@@ -263,7 +267,7 @@ fn main() {
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
 
     if !args.ignore_uncommitted_changes {
-      assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
+        assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
     }
 
     let diff = if !args.full_spec {
@@ -319,10 +323,11 @@ mod test {
         let (_in_file, in_string) = read_file(Path::new(input)).unwrap();
         let (_out_file, out_string) = read_file(Path::new(&output)).unwrap();
 
-        let lines: Vec<&str> = in_string.split("\n").collect();
+        let lines: Vec<(bool, &str)> = in_string.split("\n").map(|line| (true, line)).collect();
+        let length = lines.len();
 
         // Initiate unwrapping/rewrapping.
-        let wrapped_lines = rewrapper::rewrap_lines(lines, 100);
+        let wrapped_lines = rewrapper::rewrap_lines(lines, length, 100);
         let file_as_string: String = wrapped_lines.join("\n");
         assert_eq!(file_as_string, out_string);
     }
