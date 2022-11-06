@@ -213,14 +213,12 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
 }
 
 fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
-    let lines: Vec<&str> = diff
-        .split("\n")
+    diff.split("\n")
         // Only consider lines that start with "+" and more than one character.
         .filter(|line| line.starts_with("+") && line.len() > 1)
         // Remove the "+" version control prefix.
         .map(|e| &e[1..])
-        .collect();
-    lines
+        .collect()
 }
 
 // Marks all of the lines in `lines` as needing format if and only if they
