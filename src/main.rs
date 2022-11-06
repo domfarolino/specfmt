@@ -46,6 +46,10 @@ struct Args {
     /// Number of columns to wrap to.
     #[arg(long, default_value_t = 100)]
     wrap: u8,
+
+    /// Reformatting the spec even if it has uncommitted changes.
+    #[arg(short, long, default_value_t = false)]
+    ignore_uncommitted_changes: bool,
 }
 
 fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Error> {
@@ -124,7 +128,9 @@ fn main() {
     let args = Args::parse();
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
 
-    assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
+    if !args.ignore_uncommitted_changes {
+      assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
+    }
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
