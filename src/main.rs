@@ -16,6 +16,10 @@ use std::path::PathBuf;
 
 mod rewrapper;
 
+// A simple struct that we use to track each line of the source specification.
+// When scoping our reformatting changes to lines in a `git diff`, most lines
+// will have `should_format = false`. We dynamically make other lines exempt
+// from formatting based on other exceptions and rules as well.
 pub struct Line<'a> {
     should_format: bool,
     contents: &'a str,
@@ -147,7 +151,6 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
         .arg("--show-current")
         .output()
         .expect("Failed to run `git branch --show-current`");
-
     let current_branch = String::from_utf8(current_branch.stdout).unwrap();
     let current_branch = current_branch.trim();
 
@@ -160,15 +163,12 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
         .arg("--format=%(refname:short)")
         .output()
         .expect("Failed to find the base branch to compare current branch '${}' with");
-
     let branches = String::from_utf8(branches.stdout).unwrap();
     let branches = branches.split('\n');
+
     let mut base_branch: &str = "";
     for branch in branches {
-        if branch == "master" {
-            base_branch = branch;
-            break;
-        } else if branch == "main" {
+        if branch == "master" || branch == "main" {
             base_branch = branch;
             break;
         }
@@ -179,13 +179,13 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
     if base_branch == "" {
         return Err(Args::command().error(
             clap::error::ErrorKind::ValueValidation,
-            "Cannot find a 'master' or 'main' base branch with which to compare the current branch of the spec",
+            format!("Cannot find a 'master' or 'main' base branch with which to compare the current branch '{}'of the spec", current_branch),
         ));
     }
 
     // Finally, compute the diff between `current_branch` and `base_branch`.
-    // Return the diff so we can inform the rewrapper of which lines to scope
-    // its changes to (as to avoid rewrapping the *entire* spec).
+    // Return the diff so we can inform the rewrapper of which lines to format
+    // (as to avoid rewrapping the *entire* spec).
     let git_diff = std::process::Command::new("git")
         .arg("-C")
         .arg(directory)
@@ -195,8 +195,9 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
         .arg(current_branch)
         .arg(filename_without_path)
         .output()
-        .expect("Failed to run `git branch --show-current`");
+        .expect("Failed to compute `git diff`");
 
+    // TODO(domfarolino): See if there is a better way to do this.
     let status = git_diff.status.code().unwrap();
     if status != 0 {
         return Err(Args::command().error(
