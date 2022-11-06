@@ -16,6 +16,11 @@ use std::path::PathBuf;
 
 mod rewrapper;
 
+pub struct Line<'a> {
+    should_format: bool,
+    contents: &'a str,
+}
+
 fn read_file(filename: &Path) -> Result<(File, String), io::Error> {
     let mut file = OpenOptions::new()
         .read(true)
@@ -242,7 +247,7 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
 //
 // This problem would go away entirely once we give all lines in `diff` a proper
 // line number.
-fn apply_diff(lines: &mut Vec<(bool, &str)>, diff: &Vec<&str>) {
+fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<&str>) {
     if diff.len() == 0 {
         return;
     }
@@ -251,8 +256,8 @@ fn apply_diff(lines: &mut Vec<(bool, &str)>, diff: &Vec<&str>) {
     // TODO(domfarolino): Remove this once we sanitize the `diff` better.
     iter.next(); // Skip the first bogus line.
     for line in lines {
-        if line.1 == **iter.peek().unwrap() {
-            line.0 = true;
+        if line.contents == **iter.peek().unwrap() {
+            line.should_format = true;
             iter.next();
         }
 
@@ -288,7 +293,13 @@ fn main() {
     };
 
     let lines: Vec<&str> = file_as_string.split("\n").collect();
-    let mut lines: Vec<(bool, &str)> = lines.iter().map(|&line| (args.full_spec, line)).collect();
+    let mut lines: Vec<Line> = lines
+        .iter()
+        .map(|&line_contents| Line {
+            should_format: args.full_spec,
+            contents: line_contents,
+        })
+        .collect();
 
     apply_diff(&mut lines, &diff);
 
@@ -323,7 +334,13 @@ mod test {
         let (_in_file, in_string) = read_file(Path::new(input)).unwrap();
         let (_out_file, out_string) = read_file(Path::new(&output)).unwrap();
 
-        let lines: Vec<(bool, &str)> = in_string.split("\n").map(|line| (true, line)).collect();
+        let lines: Vec<Line> = in_string
+            .split("\n")
+            .map(|line| Line {
+                should_format: true,
+                contents: line,
+            })
+            .collect();
         let length = lines.len();
 
         // Initiate unwrapping/rewrapping.

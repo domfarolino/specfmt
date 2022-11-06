@@ -1,7 +1,8 @@
+use super::Line;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn rewrap_lines(lines: Vec<(bool, &str)>, diff_lines: usize, column_length: u8) -> Vec<String> {
+pub fn rewrap_lines(lines: Vec<Line>, diff_lines: usize, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
     println!(
         "The spec has {} lines total. We'll try to wrap {} lines to {} characters",
@@ -28,28 +29,28 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-fn unwrap_lines(lines: Vec<(bool, &str)>) -> Vec<(bool, String)> {
+fn unwrap_lines(lines: Vec<Line>) -> Vec<(bool, String)> {
     let mut return_lines = Vec::<(bool, String)>::new();
     let mut previous_line_smushable = false;
 
-    for (should_format, line) in lines {
-        if is_standalone_line(line.trim()) {
-            return_lines.push((should_format, line.to_string()));
+    for line in lines {
+        if is_standalone_line(line.contents.trim()) {
+            return_lines.push((line.should_format, line.contents.to_string()));
             previous_line_smushable = false;
         } else {
-            if previous_line_smushable == true && should_format {
+            if previous_line_smushable == true && line.should_format {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
                 // TODO(domfarolino): Document this.
                 return_lines[n - 1].0 = true;
                 return_lines[n - 1]
                     .1
-                    .push_str(&(" ".to_owned() + line.trim()));
+                    .push_str(&(" ".to_owned() + line.contents.trim()));
             } else {
-                return_lines.push((should_format, line.to_string()));
+                return_lines.push((line.should_format, line.contents.to_string()));
             }
 
-            previous_line_smushable = !must_break(line);
+            previous_line_smushable = !must_break(line.contents);
         }
     }
 
