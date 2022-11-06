@@ -209,6 +209,20 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
     lines
 }
 
+fn apply_diff(lines: &mut Vec<(bool, &str)>, diff: &Vec<&str>) {
+    let mut i = 1;
+    for tuple in lines {
+        if tuple.1.trim() == diff[i].trim() {
+            // println!("Setting diff = true!");
+            tuple.0 = true;
+            i = i + 1;
+        }
+        if i == diff.len() {
+            break;
+        }
+    }
+}
+
 fn main() {
     let args = Args::parse();
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
@@ -230,10 +244,12 @@ fn main() {
     };
 
     let lines: Vec<&str> = file_as_string.split("\n").collect();
-    let lines: Vec<(bool, &str)> = lines.iter().map(|&line| (true, line)).collect();
+    let mut lines: Vec<(bool, &str)> = lines.iter().map(|&line| (false, line)).collect();
+
+    apply_diff(&mut lines, &diff);
 
     // Initiate unwrapping/rewrapping.
-    let rewrapped_lines = rewrapper::rewrap_lines(lines, diff, args.wrap);
+    let rewrapped_lines = rewrapper::rewrap_lines(lines, diff.len(), args.wrap);
 
     // Join all lines and write to file.
     let file_as_string = rewrapped_lines.join("\n");

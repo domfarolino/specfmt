@@ -1,17 +1,16 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn rewrap_lines(lines: Vec<(bool, &str)>, diff: Vec<&str>, column_length: u8) -> Vec<String> {
-    // let lines: Vec<&str> = lines.iter().map(|tuple| tuple.1).collect();
+pub fn rewrap_lines(lines: Vec<(bool, &str)>, diff_lines: usize, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
     println!(
         "The spec has {} lines total. We'll try to wrap {} lines to {} characters",
         lines.len(),
-        diff.len(),
+        diff_lines,
         column_length
     );
-    let unwrapped_lines: Vec<String> = unwrap_lines(lines, &diff);
-    wrap_lines(unwrapped_lines, &diff, column_length)
+    let unwrapped_lines: Vec<(bool, String)> = unwrap_lines(lines);
+    wrap_lines(unwrapped_lines, column_length)
 }
 
 // Helpers.
@@ -29,21 +28,23 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-fn unwrap_lines(lines: Vec<(bool, &str)>) -> Vec<String> {
-    let mut return_lines = Vec::<String>::new();
+fn unwrap_lines(lines: Vec<(bool, &str)>) -> Vec<(bool, String)> {
+    let mut return_lines = Vec::<(bool, String)>::new();
     let mut previous_line_smushable = false;
 
-    for (should_unwrap, line) in lines {
+    for (should_format, line) in lines {
         if is_standalone_line(line.trim()) {
-            return_lines.push(line.to_string());
+            return_lines.push((should_format, line.to_string()));
             previous_line_smushable = false;
         } else {
-            if previous_line_smushable == true && should_unwrap {
+            if previous_line_smushable == true && should_format {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
-                return_lines[n - 1].push_str(&(" ".to_owned() + line.trim()));
+                // TODO(domfarolino): Document this.
+                return_lines[n - 1].0 = true;
+                return_lines[n - 1].1.push_str(&(" ".to_owned() + line.trim()));
             } else {
-                return_lines.push(line.to_string());
+                return_lines.push((should_format, line.to_string()));
             }
 
             previous_line_smushable = !must_break(line);
@@ -53,10 +54,10 @@ fn unwrap_lines(lines: Vec<(bool, &str)>) -> Vec<String> {
     return_lines
 }
 
-fn wrap_lines(lines: Vec<String>, diff: &Vec<&str>, column_length: u8) -> Vec<String> {
+fn wrap_lines(lines: Vec<(bool, String)>, column_length: u8) -> Vec<String> {
     let mut rewrapped_lines: Vec<String> = Vec::new();
-    for line in lines.iter() {
-        if line.len() <= column_length.into() || exempt_from_wrapping(line) || !diff.contains(&(line.as_str())) {
+    for (should_format, line) in lines.iter() {
+        if line.len() <= column_length.into() || exempt_from_wrapping(line) || !should_format {
             rewrapped_lines.push(line.to_string());
         } else {
             rewrapped_lines.append(&mut wrap_single_line(&line, column_length));
