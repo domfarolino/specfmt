@@ -1,7 +1,8 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn rewrap_lines(lines: Vec<&str>, diff: Vec<&str>, column_length: u8) -> Vec<String> {
+pub fn rewrap_lines(lines: Vec<(bool, &str)>, diff: Vec<&str>, column_length: u8) -> Vec<String> {
+    // let lines: Vec<&str> = lines.iter().map(|tuple| tuple.1).collect();
     println!("- - The Great Rewrapper - -");
     println!(
         "The spec has {} lines total. We'll try to wrap {} lines to {} characters",
@@ -28,16 +29,16 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-fn unwrap_lines(lines: Vec<&str>, diff: &Vec<&str>) -> Vec<String> {
+fn unwrap_lines(lines: Vec<(bool, &str)>) -> Vec<String> {
     let mut return_lines = Vec::<String>::new();
     let mut previous_line_smushable = false;
 
-    for line in lines {
+    for (should_unwrap, line) in lines {
         if is_standalone_line(line.trim()) {
             return_lines.push(line.to_string());
             previous_line_smushable = false;
         } else {
-            if previous_line_smushable == true && diff.contains(&line.trim()) {
+            if previous_line_smushable == true && should_unwrap {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
                 return_lines[n - 1].push_str(&(" ".to_owned() + line.trim()));

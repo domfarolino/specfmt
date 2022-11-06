@@ -201,11 +201,10 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
 
 fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
     let lines: Vec<&str>= diff.split("\n")
-        .enumerate()
         // Only consider lines that start with "+" and more than one character.
-        .filter(|&(idx, line)| line.starts_with("+") && line.len() > 1)
+        .filter(|line| line.starts_with("+") && line.len() > 1)
         // Remove the "+" version control prefix.
-        .map(|(_, e)| &e[1..])
+        .map(|e| &e[1..])
         .collect();
     lines
 }
@@ -220,7 +219,7 @@ fn main() {
 
     let diff = git_diff(&filename).unwrap_or_else(|err| err.exit());
     let diff = sanitized_diff_lines(&diff);
-    println!("{:#?}", diff);
+    // println!("{:#?}", diff);
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
@@ -231,6 +230,7 @@ fn main() {
     };
 
     let lines: Vec<&str> = file_as_string.split("\n").collect();
+    let lines: Vec<(bool, &str)> = lines.iter().map(|&line| (true, line)).collect();
 
     // Initiate unwrapping/rewrapping.
     let rewrapped_lines = rewrapper::rewrap_lines(lines, diff, args.wrap);
