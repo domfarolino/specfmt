@@ -50,6 +50,10 @@ struct Args {
     /// Reformat the spec even if it has uncommitted changes.
     #[arg(short, long, default_value_t = false)]
     ignore_uncommitted_changes: bool,
+
+    /// Reformat the entire spec, not scoped to the changes of the current branch.
+    #[arg(short, long, default_value_t = false)]
+    full_spec: bool,
 }
 
 fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Error> {
@@ -235,7 +239,12 @@ fn main() {
       assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
     }
 
-    let diff = git_diff(&filename).unwrap_or_else(|err| err.exit());
+    let diff = if !args.full_spec {
+        git_diff(&filename).unwrap_or_else(|err| err.exit())
+    } else {
+        String::from("")
+    };
+
     let diff = sanitized_diff_lines(&diff);
     // println!("{:#?}", diff);
 
@@ -248,12 +257,18 @@ fn main() {
     };
 
     let lines: Vec<&str> = file_as_string.split("\n").collect();
-    let mut lines: Vec<(bool, &str)> = lines.iter().map(|&line| (false, line)).collect();
+    let mut lines: Vec<(bool, &str)> = lines.iter().map(|&line| (args.full_spec, line)).collect();
 
     apply_diff(&mut lines, &diff);
 
     // Initiate unwrapping/rewrapping.
-    let rewrapped_lines = rewrapper::rewrap_lines(lines, diff.len(), args.wrap);
+    let num_lines_to_format = if args.full_spec {
+        lines.len()
+    } else {
+        diff.len()
+    };
+
+    let rewrapped_lines = rewrapper::rewrap_lines(lines, num_lines_to_format, args.wrap);
 
     // Join all lines and write to file.
     let file_as_string = rewrapped_lines.join("\n");
