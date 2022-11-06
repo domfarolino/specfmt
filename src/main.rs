@@ -47,7 +47,7 @@ struct Args {
     #[arg(long, default_value_t = 100)]
     wrap: u8,
 
-    /// Reformatting the spec even if it has uncommitted changes.
+    /// Reformat the spec even if it has uncommitted changes.
     #[arg(short, long, default_value_t = false)]
     ignore_uncommitted_changes: bool,
 }
