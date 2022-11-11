@@ -230,8 +230,11 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
 //   2.) The preexisting line in the spec appears after lines that exactly match
 //       all previous lines in the git diff.
 //
-// To see this problem in action, see the tests:
+// To see this problem in action, see the test:
 //   - testcases/git_diff/duplicate-lines.in.html
+//
+// The following test on the other hand, shows how we're unlikely to hit the
+// aforementioned bug though:
 //   - testcases/git_diff/duplicate-lines-separated.in.html
 //
 // This problem would go away entirely once we give all lines in `diff` a proper
