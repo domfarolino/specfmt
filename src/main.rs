@@ -228,17 +228,10 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
 //   1.) A line you add is identical to a previous, preexisting one in the spec
 //   2.) The preexisting line in the spec appears after lines that exactly match
 //       all previous lines in the git diff.
-// Consider the example:
-//  +----------+
-// 1| My spec  |
-// 2|          |
-// 3|+ Intro   |
-// 4|+ My spec |
-//  +----------+
-// It might sound like line 1 would get marked as a candidate for reformatting
-// given the flaws in this algorithm, since it matches line 4 in the computed
-// diff, but it wouldn't. Only a line matching "My spec" that comees *after*
-// a line "Intro" would get marked as a candidate for reformatting.
+//
+// To see this problem in action, see the tests:
+//   - testcases/git_diff/duplicate-lines.in.html
+//   - testcases/git_diff/duplicate-lines-separated.in.html
 //
 // This problem would go away entirely once we give all lines in `diff` a proper
 // line number.
