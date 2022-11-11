@@ -17,9 +17,10 @@ use std::path::PathBuf;
 mod rewrapper;
 
 // A simple struct that we use to track each line of the source specification.
-// When scoping our reformatting changes to lines in a `git diff`, most lines
-// will have `should_format = false`. We dynamically make other lines exempt
-// from formatting based on other exceptions and rules as well.
+// When scoping our reformatting changes to lines in a `git diff`, lines in the
+// spec do not also appear in the diff will have `should_format = false`. We
+// dynamically make other lines exempt from formatting based on other exceptions
+// and rules as well.
 pub struct Line<'a> {
     should_format: bool,
     contents: &'a str,
@@ -278,6 +279,8 @@ fn main() {
 
     let mut lines: Vec<Line> = file_as_string.split("\n")
         .map(|line_contents| Line {
+            // If we are to format the entire spec, then mark each line as
+            // subject to formatting.
             should_format: args.full_spec,
             contents: line_contents,
         })
@@ -285,13 +288,13 @@ fn main() {
 
     apply_diff(&mut lines, &diff);
 
-    // Initiate unwrapping/rewrapping.
     let num_lines_to_format = if args.full_spec {
         lines.len()
     } else {
         diff.len()
     };
 
+    // Initiate unwrapping/rewrapping.
     let rewrapped_lines = rewrapper::rewrap_lines(lines, num_lines_to_format, args.wrap);
 
     // Join all lines and write to file.
@@ -308,7 +311,7 @@ mod test {
     use test_generator::test_resources;
 
     #[test_resources("testcases/*.in.html")]
-    fn rewrap_test(input: &str) {
+    fn rewrap_tests(input: &str) {
         assert!(Path::new(input).exists());
         let output = input.replace("in.html", "out.html");
         assert!(Path::new(&output).exists());
@@ -346,6 +349,8 @@ mod test {
         let mut lines: Vec<Line> = in_string
             .split("\n")
             .map(|line| Line {
+                // Exempt all lines from formatting. `apply_diff()` below will
+                // reverse this for lines included in the diff.
                 should_format: false,
                 contents: line,
             })
