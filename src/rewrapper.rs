@@ -29,14 +29,16 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-// TODO(domfarolino): BEFORE MERGING: There is a bug in this algorithm where if
-// a git diff makes the middle of a perfectly-formatted paragraph too long,
-// we'll only rewrap that line, which might leave subsequent lines sub-optimally
-// rewrapped (too short). If we push new text to a new line, then we should
-// unwrap that line and repeat the process for the rest of... I guess the
-// paragraph, not sure. This is really a function of the fact that we unwrap and
-// rewrap in two different phases I guess, but we should be able to work around
-// that here.
+// TODO: This algorithm has a bug where if `git diff` describes an addition to a
+// line in a perfectly-formatted paragraph, such that the addition makes the
+// line now too long middle of a perfectly-formatted paragraph, we'll only
+// rewrap that line, which might leave subsequent lines sub-optimally wrapped
+// (too short). If a diff pushes new text to an existing line, we should do
+// something like manually unwrap that line and repeat the process for the rest
+// of the paragraph or something.
+//
+// To see this failure in action, see the test:
+//   - testcases/git_diff/addition-in-middle-of-p.in.html
 fn unwrap_lines(lines: Vec<Line>) -> Vec<(bool, String)> {
     // TODO(domfarolino): We should be returning something like a `Vec<Line>`
     // here, but with owned strings (if necessary, as we currently have it)
