@@ -1,0 +1,11 @@
+diff --git a/testcases/git_diff/duplicate-lines-separated.in.html b/testcases/git_diff/duplicate-lines-separated.in.html
+index f4dccf2..a68a29d 100644
+--- a/testcases/git_diff/duplicate-lines-separated.in.html
++++ b/testcases/git_diff/duplicate-lines-separated.in.html
+@@ -1,2 +1,6 @@
+ 
+                           <p>This is my specification and it is intended for authors of documents and scripts that use the features defined in this specification<span w-nodev>, implementers ......</span>.</p>
++
++                          <h1>My specification</h1>
++
++                          <p>This is my specification and it is intended for authors of documents and scripts that use the features defined in this specification<span w-nodev>, implementers ......</span>.</p>

@@ -312,10 +312,10 @@ fn main() {
 #[cfg(test)]
 mod test {
     use super::*;
-
     use test_generator::test_resources;
+
     #[test_resources("testcases/*.in.html")]
-    fn verify_resource(input: &str) {
+    fn rewrap_test(input: &str) {
         assert!(Path::new(input).exists());
         let output = input.replace("in.html", "out.html");
         assert!(Path::new(&output).exists());
@@ -337,4 +337,35 @@ mod test {
         let file_as_string: String = wrapped_lines.join("\n");
         assert_eq!(file_as_string, out_string);
     }
+
+    #[test_resources("testcases/git_diff/*.in.html")]
+    fn git_diff_tests(input: &str) {
+        assert!(Path::new(input).exists());
+        let output = input.replace("in.html", "out.html");
+        let diff = input.replace("in.html", "diff");
+        assert!(Path::new(&output).exists());
+        assert!(Path::new(&diff).exists());
+
+        let (_in_file, in_string) = read_file(Path::new(input)).unwrap();
+        let (_out_file, out_string) = read_file(Path::new(&output)).unwrap();
+        let (_diff_file, diff_string) = read_file(Path::new(&diff)).unwrap();
+
+        let mut lines: Vec<Line> = in_string
+            .split("\n")
+            .map(|line| Line {
+                should_format: false,
+                contents: line,
+            })
+            .collect();
+        let length = lines.len();
+
+        let diff = sanitized_diff_lines(&diff_string);
+        apply_diff(&mut lines, &diff);
+
+        // Initiate unwrapping/rewrapping.
+        let wrapped_lines = rewrapper::rewrap_lines(lines, length, 100);
+        let file_as_string: String = wrapped_lines.join("\n");
+        assert_eq!(file_as_string, out_string);
+    }
+
 }
