@@ -277,7 +277,8 @@ fn main() {
         Err(error) => panic!("Error opening file '{}': {:?}", filename.display(), error),
     };
 
-    let mut lines: Vec<Line> = file_as_string.split("\n")
+    let mut lines: Vec<Line> = file_as_string
+        .split("\n")
         .map(|line_contents| Line {
             // If we are to format the entire spec, then mark each line as
             // subject to formatting.
@@ -365,5 +366,4 @@ mod test {
         let file_as_string: String = wrapped_lines.join("\n");
         assert_eq!(file_as_string, out_string);
     }
-
 }

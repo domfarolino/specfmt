@@ -65,7 +65,10 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
 
     for line in lines {
         if is_standalone_line(line.contents.trim()) {
-            return_lines.push(OwnedLine {should_format: line.should_format, contents: line.contents.to_string()});
+            return_lines.push(OwnedLine {
+                should_format: line.should_format,
+                contents: line.contents.to_string(),
+            });
             previous_line_smushable = false;
         } else {
             if previous_line_smushable == true && line.should_format {
@@ -75,9 +78,14 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
                 // the previous one, we have to mark the previous line as a
                 // candidate for formatting (it might not already be).
                 return_lines[n - 1].should_format = true;
-                return_lines[n - 1].contents.push_str(&(String::from(" ") + line.contents.trim()));
+                return_lines[n - 1]
+                    .contents
+                    .push_str(&(String::from(" ") + line.contents.trim()));
             } else {
-                return_lines.push(OwnedLine {should_format: line.should_format, contents: line.contents.to_string()});
+                return_lines.push(OwnedLine {
+                    should_format: line.should_format,
+                    contents: line.contents.to_string(),
+                });
             }
 
             previous_line_smushable = !must_break(line.contents);
@@ -90,7 +98,10 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
 fn wrap_lines(lines: Vec<OwnedLine>, column_length: u8) -> Vec<String> {
     let mut rewrapped_lines: Vec<String> = Vec::new();
     for line in lines.iter() {
-        if line.contents.len() <= column_length.into() || exempt_from_wrapping(&line.contents) || !line.should_format {
+        if line.contents.len() <= column_length.into()
+            || exempt_from_wrapping(&line.contents)
+            || !line.should_format
+        {
             rewrapped_lines.push(line.contents.to_string());
         } else {
             rewrapped_lines.append(&mut wrap_single_line(&line.contents, column_length));
