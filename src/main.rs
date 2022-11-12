@@ -57,12 +57,12 @@ struct Args {
     #[arg(long, default_value_t = 100)]
     wrap: u8,
 
-    /// Reformat the spec even if it has uncommitted changes.
+    /// Force-reformat the spec even if it has uncommitted changes.
     #[arg(short, long, default_value_t = false)]
-    ignore_uncommitted_changes: bool,
+    force: bool,
 
     /// Reformat the entire spec, not scoped to the changes of the current branch.
-    #[arg(short, long, default_value_t = false)]
+    #[arg(long, default_value_t = false)]
     full_spec: bool,
 }
 
@@ -261,7 +261,7 @@ fn main() {
     let args = Args::parse();
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
 
-    if !args.ignore_uncommitted_changes {
+    if !args.force {
         assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
     }
 
