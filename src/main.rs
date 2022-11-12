@@ -16,6 +16,16 @@ use std::path::PathBuf;
 
 mod rewrapper;
 
+// A simple struct that we use to track each line of the source specification.
+// When scoping our reformatting changes to lines in a `git diff`, lines in the
+// spec do not also appear in the diff will have `should_format = false`. We
+// dynamically make other lines exempt from formatting based on other exceptions
+// and rules as well.
+pub struct Line<'a> {
+    should_format: bool,
+    contents: &'a str,
+}
+
 fn read_file(filename: &Path) -> Result<(File, String), io::Error> {
     let mut file = OpenOptions::new()
         .read(true)
@@ -50,6 +60,10 @@ struct Args {
     /// Reformat the spec even if it has uncommitted changes.
     #[arg(short, long, default_value_t = false)]
     ignore_uncommitted_changes: bool,
+
+    /// Reformat the entire spec, not scoped to the changes of the current branch.
+    #[arg(short, long, default_value_t = false)]
+    full_spec: bool,
 }
 
 fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Error> {
@@ -124,13 +138,139 @@ fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Erro
     ))
 }
 
+// If there are no errors, this returns the computed diff of the target spec's
+// current branch and base branch (master or main). The output should be
+// filtered by `sanitized_diff_lines()`.
+fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
+    // Extract the filename itself, as well as the directory from `path`.
+    assert!(path.is_file());
+    let filename_without_path = path.file_name().unwrap().to_str().unwrap();
+    let directory = path.parent().unwrap().to_str().unwrap();
+
+    // Get the name of the git branch that the spec is currently on.
+    let current_branch = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .arg("branch")
+        .arg("--show-current")
+        .output()
+        .expect("Failed to run `git branch --show-current`");
+    let current_branch = String::from_utf8(current_branch.stdout).unwrap();
+    let current_branch = current_branch.trim();
+
+    // Get the base branch to compare `current_branch` to with in `git diff`. We
+    // expect it to be either `master` or `main`, and fail otherwise.
+    let branches = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .arg("for-each-ref")
+        .arg("--format=%(refname:short)")
+        .output()
+        .expect("Failed to find the base branch to compare current branch '${}' with");
+    let branches = String::from_utf8(branches.stdout).unwrap();
+    let branches = branches.split('\n');
+
+    let mut base_branch: &str = "";
+    for branch in branches {
+        if branch == "master" || branch == "main" {
+            base_branch = branch;
+            break;
+        }
+    }
+
+    // Could not find a branch named `master` or `main`. This configuration is
+    // considered invalid.
+    if base_branch == "" {
+        return Err(Args::command().error(
+            clap::error::ErrorKind::ValueValidation,
+            format!("Cannot find a 'master' or 'main' base branch with which to compare the current branch '{}'of the spec", current_branch),
+        ));
+    }
+
+    // Finally, compute the diff between `current_branch` and `base_branch`.
+    // Return the diff so we can inform the rewrapper of which lines to format
+    // (as to avoid rewrapping the *entire* spec).
+    let git_diff = std::process::Command::new("git")
+        .arg("-C")
+        .arg(directory)
+        .arg("diff")
+        .arg("-U0")
+        .arg(base_branch)
+        .arg(current_branch)
+        .arg(filename_without_path)
+        .output()
+        .expect("Failed to compute `git diff`");
+
+    Ok(String::from_utf8(git_diff.stdout).unwrap())
+}
+
+// Takes the `String` output of `git_diff` above, and filters out irrelevant
+// lines. Cannot be a part of `git_diff` because this returns a vector of string
+// slices (for efficiency) on top of strings allocated inside of `git_diff`.
+fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
+    diff.split("\n")
+        .enumerate()
+        // Strip the first 5 version control lines, and only consider lines
+        // prefixed with "+" that are more than one character long.
+        .filter(|&(i, line)| i > 4 && line.starts_with("+") && line.len() > 1)
+        // Remove the "+" version control prefix.
+        .map(|(_, line)| &line[1..])
+        .collect()
+}
+
+// Marks all of the lines in `lines` as needing format if and only if they
+// appear in `diff`. This algorithm is deficient in the sense that it compares
+// the *contents* of the lines in `diff` with `lines`, not the actual line
+// numbers. This is a problem if in the current branch of a spec, you add a line
+// that is identical to an earlier line in the spec that predates the current
+// branch. This algorithm will recognize the earlier, older line in the spec as
+// the one in the computed `diff`, and mark it as a candidate for formatting. In
+// practice, this is very unlikely to happen; it requires that:
+//   1.) A line you add is identical to a previous, preexisting one in the spec
+//   2.) The preexisting line in the spec appears after lines that exactly match
+//       all previous lines in the git diff.
+//
+// To see this problem in action, see the test:
+//   - testcases/git_diff/duplicate-lines.in.html
+//
+// The following test on the other hand, shows how we're unlikely to hit the
+// aforementioned bug though:
+//   - testcases/git_diff/duplicate-lines-separated.in.html
+//
+// This problem would go away entirely once we give all lines in `diff` a proper
+// line number.
+fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<&str>) {
+    if diff.len() == 0 {
+        return;
+    }
+
+    let mut iter = diff.iter().peekable();
+    for line in lines {
+        if line.contents == **iter.peek().unwrap() {
+            line.should_format = true;
+            iter.next();
+        }
+
+        if iter.peek() == None {
+            break;
+        }
+    }
+}
+
 fn main() {
     let args = Args::parse();
     let filename = default_filename(args.filename).unwrap_or_else(|err| err.exit());
 
     if !args.ignore_uncommitted_changes {
-      assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
+        assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
     }
+
+    let diff = if !args.full_spec {
+        git_diff(&filename).unwrap_or_else(|err| err.exit())
+    } else {
+        String::from("")
+    };
+    let diff = sanitized_diff_lines(&diff);
 
     let (file, file_as_string): (File, String) = match read_file(&filename) {
         Ok((file, string)) => {
@@ -140,10 +280,26 @@ fn main() {
         Err(error) => panic!("Error opening file '{}': {:?}", filename.display(), error),
     };
 
-    let lines: Vec<&str> = file_as_string.split("\n").collect();
+    let mut lines: Vec<Line> = file_as_string
+        .split("\n")
+        .map(|line_contents| Line {
+            // If we are to format the entire spec, then mark each line as
+            // subject to formatting.
+            should_format: args.full_spec,
+            contents: line_contents,
+        })
+        .collect();
+
+    apply_diff(&mut lines, &diff);
+
+    let num_lines_to_format = if args.full_spec {
+        lines.len()
+    } else {
+        diff.len()
+    };
 
     // Initiate unwrapping/rewrapping.
-    let rewrapped_lines = rewrapper::rewrap_lines(lines, args.wrap);
+    let rewrapped_lines = rewrapper::rewrap_lines(lines, num_lines_to_format, args.wrap);
 
     // Join all lines and write to file.
     let file_as_string = rewrapped_lines.join("\n");
@@ -156,10 +312,10 @@ fn main() {
 #[cfg(test)]
 mod test {
     use super::*;
-
     use test_generator::test_resources;
+
     #[test_resources("testcases/*.in.html")]
-    fn verify_resource(input: &str) {
+    fn simple_rewrap_tests(input: &str) {
         assert!(Path::new(input).exists());
         let output = input.replace("in.html", "out.html");
         assert!(Path::new(&output).exists());
@@ -167,10 +323,49 @@ mod test {
         let (_in_file, in_string) = read_file(Path::new(input)).unwrap();
         let (_out_file, out_string) = read_file(Path::new(&output)).unwrap();
 
-        let lines: Vec<&str> = in_string.split("\n").collect();
+        let lines: Vec<Line> = in_string
+            .split("\n")
+            .map(|line| Line {
+                should_format: true,
+                contents: line,
+            })
+            .collect();
+        let length = lines.len();
 
         // Initiate unwrapping/rewrapping.
-        let wrapped_lines = rewrapper::rewrap_lines(lines, 100);
+        let wrapped_lines = rewrapper::rewrap_lines(lines, length, 100);
+        let file_as_string: String = wrapped_lines.join("\n");
+        assert_eq!(file_as_string, out_string);
+    }
+
+    #[test_resources("testcases/git_diff/*.in.html")]
+    fn git_diff_tests(input: &str) {
+        assert!(Path::new(input).exists());
+        let output = input.replace("in.html", "out.html");
+        let diff = input.replace("in.html", "diff");
+        assert!(Path::new(&output).exists());
+        assert!(Path::new(&diff).exists());
+
+        let (_in_file, in_string) = read_file(Path::new(input)).unwrap();
+        let (_out_file, out_string) = read_file(Path::new(&output)).unwrap();
+        let (_diff_file, diff_string) = read_file(Path::new(&diff)).unwrap();
+
+        let mut lines: Vec<Line> = in_string
+            .split("\n")
+            .map(|line| Line {
+                // Exempt all lines from formatting. `apply_diff()` below will
+                // reverse this for lines included in the diff.
+                should_format: false,
+                contents: line,
+            })
+            .collect();
+        let length = lines.len();
+
+        let diff = sanitized_diff_lines(&diff_string);
+        apply_diff(&mut lines, &diff);
+
+        // Initiate unwrapping/rewrapping.
+        let wrapped_lines = rewrapper::rewrap_lines(lines, length, 100);
         let file_as_string: String = wrapped_lines.join("\n");
         assert_eq!(file_as_string, out_string);
     }

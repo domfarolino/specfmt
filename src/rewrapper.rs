@@ -1,14 +1,33 @@
+use super::Line;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-pub fn rewrap_lines(lines: Vec<&str>, column_length: u8) -> Vec<String> {
+// A struct similar to `Line`, with the exception that `OwnedLine` does not
+// maintain a string reference, but rather an owned `String`. We cannot easily
+// keep a reference to the original spec strings, because due to unwrapping,
+// some of the lines of a spec have been mutated beyond the capability of
+// slicing.
+//
+// That is, when turn `LINE + NEW_LINE + LINE2` into `LINE + SPACE + LINE2`, we
+// are incapable of taking a slice over the entire line since it would include
+// two non-contiguous slices separated by a brand new space character. We could
+// modify `Line` to support this case where a given "line" consists of multiple
+// string slices and owned string spaces, for efficiency, but for now we just use
+// `OwnedLine` since it is easier.
+pub struct OwnedLine {
+    should_format: bool,
+    contents: String,
+}
+
+pub fn rewrap_lines(lines: Vec<Line>, diff_lines: usize, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
     println!(
-        "We're dealing with {} lines total, and wrapping to {} characters",
+        "The spec has {} lines total. We'll try to wrap {} lines to {} characters",
         lines.len(),
+        diff_lines,
         column_length
     );
-    let unwrapped_lines: Vec<String> = unwrap_lines(lines);
+    let unwrapped_lines: Vec<OwnedLine> = unwrap_lines(lines);
     wrap_lines(unwrapped_lines, column_length)
 }
 
@@ -27,37 +46,65 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-fn unwrap_lines(lines: Vec<&str>) -> Vec<String> {
-    let mut return_lines = Vec::<String>::new();
+// TODO: This algorithm has a bug where if `git diff` describes an addition to a
+// line in a perfectly-formatted paragraph, such that the addition makes the
+// line now too long middle of a perfectly-formatted paragraph, we'll only
+// rewrap that line, which might leave subsequent lines sub-optimally wrapped
+// (too short). If a diff pushes new text to an existing line, we should do
+// something like manually unwrap that line and repeat the process for the rest
+// of the paragraph or something.
+//
+// To see this failure in action, see the test:
+//   - testcases/git_diff/addition-in-middle-of-p.in.html
+fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
+    // TODO(domfarolino): We should be returning something like a `Vec<Line>`
+    // here, but with owned strings (if necessary, as we currently have it)
+    // instead of string slices. The tuple is a little opaque.
+    let mut return_lines = Vec::<OwnedLine>::new();
     let mut previous_line_smushable = false;
 
     for line in lines {
-        if is_standalone_line(line.trim()) {
-            return_lines.push(line.to_string());
+        if is_standalone_line(line.contents.trim()) {
+            return_lines.push(OwnedLine {
+                should_format: line.should_format,
+                contents: line.contents.to_string(),
+            });
             previous_line_smushable = false;
         } else {
-            if previous_line_smushable == true {
+            if previous_line_smushable == true && line.should_format {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
-                return_lines[n - 1].push_str(&(" ".to_owned() + line.trim()));
+                // If we're unwrapping this line by tacking it onto the end of
+                // the previous one, we have to mark the previous line as a
+                // candidate for formatting (it might not already be).
+                return_lines[n - 1].should_format = true;
+                return_lines[n - 1]
+                    .contents
+                    .push_str(&(String::from(" ") + line.contents.trim()));
             } else {
-                return_lines.push(line.to_string());
+                return_lines.push(OwnedLine {
+                    should_format: line.should_format,
+                    contents: line.contents.to_string(),
+                });
             }
 
-            previous_line_smushable = !must_break(line);
+            previous_line_smushable = !must_break(line.contents);
         }
     }
 
     return_lines
 }
 
-fn wrap_lines(lines: Vec<String>, column_length: u8) -> Vec<String> {
+fn wrap_lines(lines: Vec<OwnedLine>, column_length: u8) -> Vec<String> {
     let mut rewrapped_lines: Vec<String> = Vec::new();
     for line in lines.iter() {
-        if line.len() <= column_length.into() || exempt_from_wrapping(line) {
-            rewrapped_lines.push(line.to_string());
+        if line.contents.len() <= column_length.into()
+            || exempt_from_wrapping(&line.contents)
+            || !line.should_format
+        {
+            rewrapped_lines.push(line.contents.to_string());
         } else {
-            rewrapped_lines.append(&mut wrap_single_line(&line, column_length));
+            rewrapped_lines.append(&mut wrap_single_line(&line.contents, column_length));
         }
     }
 
