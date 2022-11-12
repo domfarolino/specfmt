@@ -315,7 +315,7 @@ mod test {
     use test_generator::test_resources;
 
     #[test_resources("testcases/*.in.html")]
-    fn rewrap_tests(input: &str) {
+    fn simple_rewrap_tests(input: &str) {
         assert!(Path::new(input).exists());
         let output = input.replace("in.html", "out.html");
         assert!(Path::new(&output).exists());
