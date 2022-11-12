@@ -40,7 +40,7 @@ fn is_standalone_line(line: &str) -> bool {
     line.len() == 0 || SINGLE_TAG.is_match(line) || FULL_DT_TAG.is_match(line)
 }
 fn must_break(line: &str) -> bool {
-    line.ends_with("</li>") || line.ends_with("</dt>")
+    line.ends_with("</li>") || line.ends_with("</dt>") || line.ends_with("</dd>")
 }
 fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
