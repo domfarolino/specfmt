@@ -50,16 +50,8 @@ fn exempt_from_wrapping(line: &str) -> bool {
 // line in a perfectly-formatted paragraph, such that the addition makes the
 // line now too long middle of a perfectly-formatted paragraph, we'll only
 // rewrap that line, which might leave subsequent lines sub-optimally wrapped
-// (too short). If a diff pushes new text to an existing line, we should do
-// something like manually unwrap that line and repeat the process for the rest
-// of the paragraph or something.
-//
-// To see this failure in action, see the test:
-//   - testcases/git_diff/addition-in-middle-of-p.in.html
+// (too short). See https://github.com/domfarolino/specfmt/issues/8 
 fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
-    // TODO(domfarolino): We should be returning something like a `Vec<Line>`
-    // here, but with owned strings (if necessary, as we currently have it)
-    // instead of string slices. The tuple is a little opaque.
     let mut return_lines = Vec::<OwnedLine>::new();
     let mut previous_line_smushable = false;
 

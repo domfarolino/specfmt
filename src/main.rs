@@ -221,24 +221,7 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
 // Marks all of the lines in `lines` as needing format if and only if they
 // appear in `diff`. This algorithm is deficient in the sense that it compares
 // the *contents* of the lines in `diff` with `lines`, not the actual line
-// numbers. This is a problem if in the current branch of a spec, you add a line
-// that is identical to an earlier line in the spec that predates the current
-// branch. This algorithm will recognize the earlier, older line in the spec as
-// the one in the computed `diff`, and mark it as a candidate for formatting. In
-// practice, this is very unlikely to happen; it requires that:
-//   1.) A line you add is identical to a previous, preexisting one in the spec
-//   2.) The preexisting line in the spec appears after lines that exactly match
-//       all previous lines in the git diff.
-//
-// To see this problem in action, see the test:
-//   - testcases/git_diff/duplicate-lines.in.html
-//
-// The following test on the other hand, shows how we're unlikely to hit the
-// aforementioned bug though:
-//   - testcases/git_diff/duplicate-lines-separated.in.html
-//
-// This problem would go away entirely once we give all lines in `diff` a proper
-// line number.
+// numbers. See https://github.com/domfarolino/specfmt/issues/7.
 fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<&str>) {
     if diff.len() == 0 {
         return;
