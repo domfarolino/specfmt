@@ -19,7 +19,7 @@ pub struct OwnedLine {
     contents: String,
 }
 
-pub fn rewrap_lines(lines: Vec<Line>, diff_lines: usize, column_length: u8) -> Vec<String> {
+pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) -> Vec<String> {
     println!("- - The Great Rewrapper - -");
     println!(
         "The spec has {} lines total. We'll try to wrap {} lines to {} characters",
@@ -27,8 +27,62 @@ pub fn rewrap_lines(lines: Vec<Line>, diff_lines: usize, column_length: u8) -> V
         diff_lines,
         column_length
     );
+
+    exempt_blocks(&mut lines);
     let unwrapped_lines: Vec<OwnedLine> = unwrap_lines(lines);
     wrap_lines(unwrapped_lines, column_length)
+}
+
+fn open_exempt_tag(line: &str) -> &str {
+    if line.contains("<pre") {
+        return "<pre";
+    }
+    if line.contains("<xmp") {
+        return "<xmp";
+    }
+    if line.contains("<style") {
+        return "<style";
+    }
+    if line.contains("<script") {
+        return "<script";
+    }
+    if line.contains("<svg") {
+        return "<svg";
+    }
+    if line.contains("<table") {
+        return "<table";
+    }
+
+    ""
+}
+
+fn contains_close_tag(open_tag: &str, line: &str) -> bool {
+    open_tag == "<pre" && line.contains("</pre>")
+        || open_tag == "<xmp" && line.contains("</xmp>")
+        || open_tag == "<style" && line.contains("</style>")
+        || open_tag == "<script" && line.contains("</script>")
+        || open_tag == "<svg" && line.contains("</svg>")
+        || open_tag == "<table" && line.contains("</table>")
+}
+
+// This function exempts all of the lines appearing inside various blocks.
+fn exempt_blocks(lines: &mut Vec<Line>) {
+    let mut in_exempt_block: &str = "";
+    for line in lines {
+        // Only assign `in_exempt_block` if we're *not* already in one.
+        if in_exempt_block.len() == 0 {
+            in_exempt_block = open_exempt_tag(&line.contents);
+        }
+
+        // If we're in an exempt block, mark the line as exempt from formatting,
+        // and see if we've reached the close block.
+        if in_exempt_block.len() > 0 {
+            line.should_format = false;
+            if contains_close_tag(in_exempt_block, &line.contents) {
+                in_exempt_block = "";
+            }
+        }
+    }
 }
 
 // Helpers.
@@ -50,7 +104,7 @@ fn exempt_from_wrapping(line: &str) -> bool {
 // line in a perfectly-formatted paragraph, such that the addition makes the
 // line now too long middle of a perfectly-formatted paragraph, we'll only
 // rewrap that line, which might leave subsequent lines sub-optimally wrapped
-// (too short). See https://github.com/domfarolino/specfmt/issues/8 
+// (too short). See https://github.com/domfarolino/specfmt/issues/8
 fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
     let mut return_lines = Vec::<OwnedLine>::new();
     let mut previous_line_smushable = false;
