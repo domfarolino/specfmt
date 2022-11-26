@@ -93,12 +93,27 @@ fn exempt_blocks(lines: &mut Vec<Line>) {
 lazy_static! {
     static ref SINGLE_TAG: Regex = Regex::new(r#"^</?[a-z-A-Z "=]+>$"#).unwrap();
     static ref FULL_DT_TAG: Regex = Regex::new(r#"<dt.*>.*</dt>$"#).unwrap();
+    static ref HEADER_TAG: Regex = Regex::new(r#"<h[0-6].*>.*</h[0-6]>$"#).unwrap();
 }
 fn is_standalone_line(line: &str) -> bool {
-    line.len() == 0 || SINGLE_TAG.is_match(line) || FULL_DT_TAG.is_match(line)
+    line.len() == 0
+        || SINGLE_TAG.is_match(line)
+        || FULL_DT_TAG.is_match(line)
+        || HEADER_TAG.is_match(line)
 }
+// This differs from `is_standalone_line()` in that it is a weaker check. If
+// `is_standalone_line()` is true, then we prevent:
+//   (a): The current line from being appended to the end of earlier lines
+//   (b): Later lines from being appended to the end of the current line
+// If a given line isn't "standalone", it can be appended to a previous line,
+// but if `must_break()` is true, we prevent later lines from being appended to
+// the end of the current line. So `must_break()` is a strictly less-powerful
+// condition to gate behavior on.
 fn must_break(line: &str) -> bool {
-    line.ends_with("</li>") || line.ends_with("</dt>") || line.ends_with("</dd>")
+    line.ends_with("</li>")
+        || line.ends_with("</dt>")
+        || line.ends_with("</dd>")
+        || line.ends_with("-->")
 }
 fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
@@ -108,7 +123,7 @@ fn exempt_from_wrapping(line: &str) -> bool {
 // line in a perfectly-formatted paragraph, such that the addition makes the
 // line now too long middle of a perfectly-formatted paragraph, we'll only
 // rewrap that line, which might leave subsequent lines sub-optimally wrapped
-// (too short). See https://github.com/domfarolino/specfmt/issues/8
+// (too short). See https://github.com/domfarolino/specfmt/issues/8.
 fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
     let mut return_lines = Vec::<OwnedLine>::new();
     let mut previous_line_smushable = false;
