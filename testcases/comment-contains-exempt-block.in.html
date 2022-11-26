@@ -1,3 +1,3 @@
 <!-- This comment is similar to some in the HTML Standard, which contain the text of an opening block that is "exempt" from formatting. The rewrapper can't tell we're in a comment, so it treats, e.g., <style> as if it were a true opening style tag, and refuses to format anything else beneath it -->
 
-                <li><p>This line obviously needs formatting, yet because of the HTML comment above, this line is mistakenly exempt from formatting.</p></li>
+                <li><p>This line obviously needs formatting. It used to *not* get formatted, because the comment above contains a opening style tag, and the rewrapper thought this line was part of a style sheet. That bug is fixed, at the expense of making HTML comments exempt from formatting.</p></li>

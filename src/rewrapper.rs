@@ -34,6 +34,9 @@ pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) 
 }
 
 fn open_exempt_tag(line: &str) -> &str {
+    if line.contains("<!--") {
+        return "<!--";
+    }
     if line.contains("<pre") {
         return "<pre";
     }
@@ -57,7 +60,8 @@ fn open_exempt_tag(line: &str) -> &str {
 }
 
 fn contains_close_tag(open_tag: &str, line: &str) -> bool {
-    open_tag == "<pre" && line.contains("</pre>")
+    open_tag == "<!--" && line.contains("-->")
+        || open_tag == "<pre" && line.contains("</pre>")
         || open_tag == "<xmp" && line.contains("</xmp>")
         || open_tag == "<style" && line.contains("</style>")
         || open_tag == "<script" && line.contains("</script>")
