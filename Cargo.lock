@@ -195,7 +195,7 @@ checksum = "a3f87b73ce11b1619a3c6332f45341e0047173771e8b8b73f87bfeefb7b56244"
 
 [[package]]
 name = "specfmt"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "clap",
  "lazy_static",
