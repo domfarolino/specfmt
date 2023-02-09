@@ -112,7 +112,7 @@ fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Er
     ))
 }
 
-fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Error> {
+fn assert_no_uncommitted_changes(path: &Path) -> Result<(), clap::error::Error> {
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
     let filename_without_path = path.file_name().unwrap();
@@ -203,10 +203,10 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
     Ok(String::from_utf8(git_diff.stdout).unwrap())
 }
 
-// Takes the `String` output of `git_diff` above, and filters out irrelevant
+// Takes the `&str` output of `git_diff` above, and filters out irrelevant
 // lines. Cannot be a part of `git_diff` because this returns a vector of string
 // slices (for efficiency) on top of strings allocated inside of `git_diff`.
-fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
+fn sanitized_diff_lines(diff: &str) -> Vec<&str> {
     diff.split('\n')
         .enumerate()
         // Strip the first 5 version control lines, and only consider lines
