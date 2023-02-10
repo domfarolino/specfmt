@@ -112,7 +112,7 @@ fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Er
     ))
 }
 
-fn assert_no_uncommitted_changes(path: &PathBuf) -> Result<(), clap::error::Error> {
+fn assert_no_uncommitted_changes(path: &Path) -> Result<(), clap::error::Error> {
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
     let filename_without_path = path.file_name().unwrap();
@@ -180,7 +180,7 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
 
     // Could not find a branch named `master` or `main`. This configuration is
     // considered invalid.
-    if base_branch == "" {
+    if base_branch.is_empty() {
         return Err(Args::command().error(
             clap::error::ErrorKind::ValueValidation,
             format!("Cannot find a 'master' or 'main' base branch with which to compare the current branch '{}'of the spec", current_branch),
@@ -203,15 +203,15 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
     Ok(String::from_utf8(git_diff.stdout).unwrap())
 }
 
-// Takes the `String` output of `git_diff` above, and filters out irrelevant
+// Takes the `&str` output of `git_diff` above, and filters out irrelevant
 // lines. Cannot be a part of `git_diff` because this returns a vector of string
 // slices (for efficiency) on top of strings allocated inside of `git_diff`.
-fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
-    diff.split("\n")
+fn sanitized_diff_lines(diff: &str) -> Vec<&str> {
+    diff.split('\n')
         .enumerate()
         // Strip the first 5 version control lines, and only consider lines
         // prefixed with "+" that are more than one character long.
-        .filter(|&(i, line)| i > 4 && line.starts_with("+") && line.len() > 1)
+        .filter(|&(i, line)| i > 4 && line.starts_with('+') && line.len() > 1)
         // Remove the "+" version control prefix.
         .map(|(_, line)| &line[1..])
         .collect()
@@ -222,7 +222,7 @@ fn sanitized_diff_lines(diff: &String) -> Vec<&str> {
 // the *contents* of the lines in `diff` with `lines`, not the actual line
 // numbers. See https://github.com/domfarolino/specfmt/issues/7.
 fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<&str>) {
-    if diff.len() == 0 {
+    if diff.is_empty() {
         return;
     }
 
@@ -233,7 +233,7 @@ fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<&str>) {
             iter.next();
         }
 
-        if iter.peek() == None {
+        if iter.peek().is_none() {
             break;
         }
     }
@@ -263,7 +263,7 @@ fn main() {
     };
 
     let mut lines: Vec<Line> = file_as_string
-        .split("\n")
+        .split('\n')
         .map(|line_contents| Line {
             // If we are to format the entire spec, then mark each line as
             // subject to formatting.
@@ -306,7 +306,7 @@ mod test {
         let (_out_file, out_string) = read_file(Path::new(&output)).unwrap();
 
         let lines: Vec<Line> = in_string
-            .split("\n")
+            .split('\n')
             .map(|line| Line {
                 should_format: true,
                 contents: line,
@@ -333,7 +333,7 @@ mod test {
         let (_diff_file, diff_string) = read_file(Path::new(&diff)).unwrap();
 
         let mut lines: Vec<Line> = in_string
-            .split("\n")
+            .split('\n')
             .map(|line| Line {
                 // Exempt all lines from formatting. `apply_diff()` below will
                 // reverse this for lines included in the diff.

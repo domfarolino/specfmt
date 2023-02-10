@@ -74,15 +74,15 @@ fn exempt_blocks(lines: &mut Vec<Line>) {
     let mut in_exempt_block: &str = "";
     for line in lines {
         // Only assign `in_exempt_block` if we're *not* already in one.
-        if in_exempt_block.len() == 0 {
-            in_exempt_block = open_exempt_tag(&line.contents);
+        if in_exempt_block.is_empty() {
+            in_exempt_block = open_exempt_tag(line.contents);
         }
 
         // If we're in an exempt block, mark the line as exempt from formatting,
         // and see if we've reached the close block.
-        if in_exempt_block.len() > 0 {
+        if !in_exempt_block.is_empty() {
             line.should_format = false;
-            if contains_close_tag(in_exempt_block, &line.contents) {
+            if contains_close_tag(in_exempt_block, line.contents) {
                 in_exempt_block = "";
             }
         }
@@ -96,7 +96,7 @@ lazy_static! {
     static ref HEADER_TAG: Regex = Regex::new(r#"<h[0-6].*>.*</h[0-6]>$"#).unwrap();
 }
 fn is_standalone_line(line: &str) -> bool {
-    line.len() == 0
+    line.is_empty()
         || SINGLE_TAG.is_match(line)
         || FULL_DT_TAG.is_match(line)
         || HEADER_TAG.is_match(line)
@@ -136,7 +136,7 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
             });
             previous_line_smushable = false;
         } else {
-            if previous_line_smushable == true && line.should_format {
+            if previous_line_smushable && line.should_format {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
                 // If we're unwrapping this line by tacking it onto the end of
@@ -186,7 +186,7 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
     let indent: &str = &indent[1];
     let line = line.trim_start();
 
-    let mut words = line.split(" ");
+    let mut words = line.split(' ');
     // This will never panic; even if `line` is empty after we trim it, the
     // split collection will contain a single empty string. See
     // https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=1035caa5a7a4324272c8966d36d323b4.
