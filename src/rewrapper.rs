@@ -177,20 +177,19 @@ fn wrap_lines(lines: Vec<OwnedLine>, column_length: u8) -> Vec<String> {
 }
 
 fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
-    lazy_static! {
-        static ref REGEX: Regex = Regex::new(r"^(\s*)").unwrap();
-    }
-
     let mut return_lines = Vec::<String>::new();
-    let indent = REGEX.captures(line).unwrap();
-    let indent: &str = &indent[1];
+    let indent = line
+        .chars()
+        .take_while(|c| c.is_whitespace())
+        .collect::<String>();
+
     let line = line.trim_start();
 
     let mut words = line.split(' ');
     // This will never panic; even if `line` is empty after we trim it, the
     // split collection will contain a single empty string. See
     // https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=1035caa5a7a4324272c8966d36d323b4.
-    let mut current_line = String::from(indent) + words.next().unwrap();
+    let mut current_line = indent.clone() + words.next().unwrap();
     for word in words {
         if current_line.len() + 1 + word.len() <= column_length.into() {
             current_line.push_str(&(" ".to_owned() + word));
@@ -198,7 +197,7 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
             if current_line != indent {
                 return_lines.push(current_line);
             }
-            current_line = String::from(indent);
+            current_line = indent.clone();
             current_line.push_str(word);
         }
     }
