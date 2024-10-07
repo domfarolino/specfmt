@@ -28,7 +28,7 @@ pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) 
         column_length
     );
 
-    mark_diff_paragraph_lines_for_formatting(&mut lines);
+    mark_diff_lines_for_formatting(&mut lines);
     exempt_blocks(&mut lines);
     let unwrapped_lines: Vec<OwnedLine> = unwrap_lines(lines);
     wrap_lines(unwrapped_lines, column_length)
@@ -120,25 +120,23 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-// Checking for if 'get diff' describes an addtion to a
-// line in a perfactly formated paragraph, this will
-// reformat that paragraph only and stop onces it eachs its end.
-fn mark_diff_paragraph_lines_for_formatting(lines: &mut Vec<Line>) {
-    let mut in_paragraph = 0; 
+// Checking for if 'get diff' describes an addtion to 
+// already formatted lines, reformatting until we reach
+// the next empty newline
+fn mark_diff_lines_for_formatting(lines: &mut Vec<Line>) {
+    let mut should_format = false;
+
     for i in 0..lines.len() {
-        if lines[i].contents.contains("<p>") {
-            in_paragraph += 1; 
-            // Start formatting at the first <p> with a diff
-            if in_paragraph == 1 && lines[i].should_format {
+        if lines[i].should_format {
+            should_format = true;
+        }
+        if should_format {
+            // Condition to stop formatting at the next empty newline
+            if lines[i].contents.trim().is_empty() {
+                should_format = false;
+            } else {
                 lines[i].should_format = true;
             }
-        } else if lines[i].contents.contains("</p>") {
-            if in_paragraph == 1 { 
-                lines[i].should_format = true;
-            }
-            in_paragraph -= 1; 
-        } else if in_paragraph > 0 && lines[i-1].should_format {
-            lines[i].should_format = true;
         }
     }
 }
