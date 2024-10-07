@@ -28,6 +28,7 @@ pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) 
         column_length
     );
 
+    mark_diff_lines_for_formatting(&mut lines);
     exempt_blocks(&mut lines);
     let unwrapped_lines: Vec<OwnedLine> = unwrap_lines(lines);
     wrap_lines(unwrapped_lines, column_length)
@@ -119,6 +120,27 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
+// Checking for if 'get diff' describes an addtion to 
+// already formatted lines, reformatting until we reach
+// the next empty newline
+fn mark_diff_lines_for_formatting(lines: &mut Vec<Line>) {
+    let mut should_format = false;
+
+    for i in 0..lines.len() {
+        if lines[i].should_format {
+            should_format = true;
+        }
+        if should_format {
+            // Condition to stop formatting at the next empty newline
+            if lines[i].contents.trim().is_empty() {
+                should_format = false;
+            } else {
+                lines[i].should_format = true;
+            }
+        }
+    }
+}
+
 // TODO: This algorithm has a bug where if `git diff` describes an addition to a
 // line in a perfectly-formatted paragraph, such that the addition makes the
 // line now too long middle of a perfectly-formatted paragraph, we'll only
@@ -152,7 +174,6 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
                     contents: line.contents.to_string(),
                 });
             }
-
             previous_line_smushable = !must_break(line.contents);
         }
     }
