@@ -1,5 +1,6 @@
 use clap::CommandFactory;
 use clap::Parser;
+use regex::Regex;
 use std::fs::read_dir;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -205,37 +206,55 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
 
 // Takes the `&str` output of `git_diff` above, and filters out irrelevant
 // lines. Cannot be a part of `git_diff` because this returns a vector of string
-// slices (for efficiency) on top of strings allocated inside of `git_diff`.
-fn sanitized_diff_lines(diff: &str) -> Vec<&str> {
+// slices (for efficiency) and their line location on top of strings
+// allocated inside of `git_diff`.
+fn sanitized_diff_lines(diff: &str) -> Vec<(usize, &str)> {
+    let mut line_number = 0;
+    let hunk_header_regex = Regex::new(r"@@ -(\d+),(\d+) \+(\d+),(\d+) @@").unwrap();
+
     diff.split('\n')
         .enumerate()
-        // Strip the first 5 version control lines, and only consider lines
-        // prefixed with "+" that are more than one character long.
-        .filter(|&(i, line)| i > 4 && line.starts_with('+') && line.len() > 1)
-        // Remove the "+" version control prefix.
-        .map(|(_, line)| &line[1..])
+        .filter_map(|(i, line)| {
+             // Extract line number from hunk header
+            if let Some(captures) = hunk_header_regex.captures(line) {
+                // Start line number count at position 3 of hunk header
+                // which will indicate where in file we start counting lines
+                line_number = captures[3].parse::<usize>().unwrap(); 
+            }
+            // Excludes version control lines
+            if i > 5 {
+                line_number += 1;
+                // Deleted line so we set line_number back one
+                if line.starts_with('-') && line.len() > 1 {
+                    line_number -= 1;
+                    None
+                } else if line.starts_with('+') && line.len() > 1  {
+                    Some((line_number, &line[1..]))
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        })
         .collect()
-}
+} 
 
-// Marks all of the lines in `lines` as needing format if and only if they
-// appear in `diff`. This algorithm is deficient in the sense that it compares
-// the *contents* of the lines in `diff` with `lines`, not the actual line
-// numbers. See https://github.com/domfarolino/specfmt/issues/7.
-fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<&str>) {
+fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<(usize, &str)>) {
     if diff.is_empty() {
         return;
     }
-
+    let mut current_line = 1;
     let mut iter = diff.iter().peekable();
     for line in lines {
-        if line.contents == **iter.peek().unwrap() {
+        if (current_line, line.contents) == **iter.peek().unwrap() {
             line.should_format = true;
             iter.next();
         }
-
         if iter.peek().is_none() {
             break;
         }
+        current_line += 1;
     }
 }
 
