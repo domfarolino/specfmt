@@ -1,0 +1,10 @@
+diff --git a/testcases/git_diff/duplicate-lines-diff-in-middle.in.html b/testcases/git_diff/duplicate-lines-diff-in-middle.in.html
+index 84c5a0a..e202f87 100644
+--- a/testcases/git_diff/duplicate-lines-diff-in-middle.in.html
++++ b/testcases/git_diff/duplicate-lines-diff-in-middle.in.html
+@@ -5,3 +5,5 @@
+                               the diff occurs at</p>
+ 
+                               <p>This is my specification and it is intended for authors of documents and scripts that use the features defined in this specification<span w-nodev>, implementers ......</span>.</p>
++
++                              <p>This is my specification and it is intended for authors of documents and scripts that use the features defined in this specification<span w-nodev>, implementers ......</span>.</p>
