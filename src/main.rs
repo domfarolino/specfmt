@@ -206,8 +206,8 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
 
 // Takes the `&str` output of `git_diff` above, and filters out irrelevant
 // lines. Cannot be a part of `git_diff` because this returns a vector of string
-// slices (for efficiency) and their line location on top of strings
-// allocated inside of `git_diff`.
+// slices (for efficiency) and their line location on top of strings allocated
+// inside of `git_diff`.
 fn sanitized_diff_lines(diff: &str) -> Vec<(usize, &str)> {
     let mut line_number = 0;
     let hunk_header_regex = Regex::new(r"@@ -(\d+),(\d+) \+(\d+),(\d+) @@").unwrap();
@@ -215,10 +215,10 @@ fn sanitized_diff_lines(diff: &str) -> Vec<(usize, &str)> {
     diff.split('\n')
         .enumerate()
         .filter_map(|(i, line)| {
-             // Extract line number from hunk header
+            // Extract line number from hunk header
             if let Some(captures) = hunk_header_regex.captures(line) {
-                // Start line number count at position 3 of hunk header
-                // which will indicate where in file we start counting lines
+            // Start line number count at position 3 of hunk header
+            // which will indicate where in file we start counting lines
                 line_number = captures[3].parse::<usize>().unwrap(); 
             }
             // Excludes version control lines
@@ -238,12 +238,13 @@ fn sanitized_diff_lines(diff: &str) -> Vec<(usize, &str)> {
             }
         })
         .collect()
-} 
+}
 
 fn apply_diff(lines: &mut Vec<Line>, diff: &Vec<(usize, &str)>) {
     if diff.is_empty() {
         return;
     }
+
     let mut current_line = 1;
     let mut iter = diff.iter().peekable();
     for line in lines {
