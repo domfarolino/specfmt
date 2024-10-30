@@ -120,9 +120,8 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-// Checking for if 'get diff' describes an addtion to 
-// already formatted lines, reformatting until we reach
-// the next empty newline
+// Checking for if 'git diff' describes an addtion to already formatted lines,
+// reformatting until we reachthe next empty newline
 fn mark_diff_lines_for_formatting(lines: &mut Vec<Line>) {
     let mut should_format = false;
 

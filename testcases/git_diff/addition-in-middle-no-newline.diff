@@ -1,0 +1,10 @@
+diff --git a/testcases/git_diff/addition-in-middle-no-newline.in.html b/testcases/git_diff/addition-in-middle-no-newline.in.html
+index ba3ee4b..7e15795 100644
+--- a/testcases/git_diff/addition-in-middle-no-newline.in.html
++++ b/testcases/git_diff/addition-in-middle-no-newline.in.html
+@@ -1,4 +1,4 @@
+                           <p>This is my specification and it is intended for authors of documents
+-                          and scripts that use the features defined in this specification and so adding new words here so lets see
++                          and scripts that use the features defined in this specification and </p> so adding new words here so lets see
+                           <p>This is my other paragraph
+                           and it is also great</p>
