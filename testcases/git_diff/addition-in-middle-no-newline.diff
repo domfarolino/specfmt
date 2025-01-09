@@ -4,7 +4,8 @@ index ba3ee4b..7e15795 100644
 +++ b/testcases/git_diff/addition-in-middle-no-newline.in.html
 @@ -1,4 +1,4 @@
                            <p>This is my specification and it is intended for authors of documents
--                          and scripts that use the features defined in this specification and so adding new words here so lets see
-+                          and scripts that use the features defined in this specification and </p> so adding new words here so lets see
+
+-                          and scripts that use the features defined in this specification.</p>
++                          and scripts that use the features defined in this specification AND SO ADDING THESE NEW WORDS HERE LETS GO.</p>
                            <p>This is my other paragraph
                            and it is also great</p>

@@ -28,7 +28,7 @@ pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) 
         column_length
     );
 
-    mark_diff_lines_for_formatting(&mut lines);
+    carryover_should_format_bit_where_necessary(&mut lines);
     exempt_blocks(&mut lines);
     let unwrapped_lines: Vec<OwnedLine> = unwrap_lines(lines);
     wrap_lines(unwrapped_lines, column_length)
@@ -112,6 +112,7 @@ fn is_standalone_line(line: &str) -> bool {
 // condition to gate behavior on.
 fn must_break(line: &str) -> bool {
     line.ends_with("</li>")
+        || line.ends_with("</p>")
         || line.ends_with("</dt>")
         || line.ends_with("</dd>")
         || line.ends_with("-->")
@@ -120,31 +121,40 @@ fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
 
-// Checking for if 'git diff' describes an addtion to already formatted lines,
-// reformatting until we reachthe next empty newline
-fn mark_diff_lines_for_formatting(lines: &mut Vec<Line>) {
-    let mut should_format = false;
+// Ensure that when a single line in the middle of a group of lines is marked as
+// `should_format`, the bit is carried down to all subsequent lines until
+// necessary.
+fn carryover_should_format_bit_where_necessary(lines: &mut Vec<Line>) {
+    let mut should_format_current_line = false;
 
     for i in 0..lines.len() {
         if lines[i].should_format {
-            should_format = true;
+            should_format_current_line = true;
         }
-        if should_format {
-            // Condition to stop formatting at the next empty newline
-            if lines[i].contents.trim().is_empty() {
-                should_format = false;
-            } else {
-                lines[i].should_format = true;
+
+        // This is either true because of the line immediately above, or because
+        // we're carrying it over from a previous line. We use it to mark all
+        // subsequent lines as `should_format` until we hit a terminating
+        // condition that tells us to stop.
+        if should_format_current_line {
+            // If we get here, then `lines[i]` does not have `should_format`
+            // explicitly true (because it was not directly modified), but it
+            // follows an explicitly `should_format` line. Therefore, we have to
+            // format the line anyways...
+            lines[i].should_format = true;
+
+            // But we have to stop carrying on this "implicit format" trend once
+            // we hit a line that meets an "implicit format terminating".
+            //
+            // TODO(domfarolino): Consider using `must_break` below instead of
+            // the specific end-p condition.
+            if lines[i].contents.trim().is_empty() || lines[i].contents.trim().ends_with("</p>") {
+                should_format_current_line = false;
             }
         }
     }
 }
 
-// TODO: This algorithm has a bug where if `git diff` describes an addition to a
-// line in a perfectly-formatted paragraph, such that the addition makes the
-// line now too long middle of a perfectly-formatted paragraph, we'll only
-// rewrap that line, which might leave subsequent lines sub-optimally wrapped
-// (too short). See https://github.com/domfarolino/specfmt/issues/8.
 fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
     let mut return_lines = Vec::<OwnedLine>::new();
     let mut previous_line_smushable = false;
