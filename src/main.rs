@@ -317,6 +317,27 @@ mod test {
         // Initiate unwrapping/rewrapping.
         let wrapped_lines = rewrapper::rewrap_lines(lines, length, 100);
         let file_as_string: String = wrapped_lines.join("\n");
+
+        let actual = input.replace("in.html", "actual.html");
+        let actual_file  = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open(Path::new(&actual))
+            .unwrap();
+
+        if file_as_string != out_string {
+            // Only write the `-actual.html` file if there is a failure.
+            match write_file(actual_file, file_as_string.clone()) {
+                Ok(_) => println!("Write succeeded"),
+                Err(error) => panic!("Error writing `-actual.html` file: {:?}", error),
+            }
+        } else {
+            // And remove any existing `-actual.html` files for passing tests.
+            if Path::new(&actual).exists() {
+                std::fs::remove_file(Path::new(&actual)).unwrap();
+            }
+        }
+
         assert_eq!(file_as_string, out_string);
     }
 
@@ -349,6 +370,27 @@ mod test {
         // Initiate unwrapping/rewrapping.
         let wrapped_lines = rewrapper::rewrap_lines(lines, length, 100);
         let file_as_string: String = wrapped_lines.join("\n");
+
+        let actual = input.replace("in.html", "actual.html");
+        let actual_file  = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open(Path::new(&actual))
+            .unwrap();
+
+        if file_as_string != out_string {
+            // Only write the `-actual.html` file if there is a failure.
+            match write_file(actual_file, file_as_string.clone()) {
+                Ok(_) => println!("Write succeeded"),
+                Err(error) => panic!("Error writing `-actual.html` file: {:?}", error),
+            }
+        } else {
+            // And remove any existing `-actual.html` files for passing tests.
+            if Path::new(&actual).exists() {
+                std::fs::remove_file(Path::new(&actual)).unwrap();
+            }
+        }
+
         assert_eq!(file_as_string, out_string);
     }
 }
