@@ -1,0 +1,11 @@
+diff --git a/testcases/git_diff/addition-in-middle-but-last-line-has-terminating-condition.in.html b/testcases/git_diff/addition-in-middle-but-last-line-has-terminating-condition.in.html
+index 514651e..cc7d3e4 100644
+--- a/testcases/git_diff/addition-in-middle-but-last-line-has-terminating-condition.in.html
++++ b/testcases/git_diff/addition-in-middle-but-last-line-has-terminating-condition.in.html
+@@ -1,5 +1,5 @@
+                           <p>This is my specification and it's intended for authors of documents and
+-                          scripts and this is the line that the developer will add some text to and
++                          scripts and this is the line that the developer will add some text to !!RIGHT HERE!! and
+                           this one isn't touched but has a fmt terminating condition (end para).</p>
+                           <p>This is my other paragraph
+                           and it is also great</p>
