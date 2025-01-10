@@ -1,0 +1,28 @@
+diff --git a/testcases/git_diff/dependencies.in.html b/testcases/git_diff/dependencies.in.html
+index 71d2a58..4a9f53c 100644
+--- a/testcases/git_diff/dependencies.in.html
++++ b/testcases/git_diff/dependencies.in.html
+@@ -5,8 +5,23 @@
+ 
+         <li>This is a big pre-existing dependency that has existed in the specification for a long time and is great</li>
+         <li>This is a big pre-existing dependency that has existed in the specification for a long time and is great</li>
++        <li>THIS IS A NEW dependency that we're adding, it is also long and relies on another specification woooo. It should not be formatted</li>
++        <li>
++         <dfn test>THIS IS ALSO A NEW dependency that is too long, but should not be formatted by the formatter.</dfn>
++        </li>
++
+         <p>And this is just an ordinary paragraph that is also in the dependencies section. It is poorly formatted which is OK because it is pre-existing.</p>
+ 
++        <p>BUT THIS IS A NEW paragraph that we're adding, and even though it started out too long, the formatter should pick it up and format it correctly.</p>
++
++        <ol>
++         <li><p>This would normally be picked up by the formatter, but because we broadly exempt all list items in the Dependencies section, sadly we don't pick it up. Oh well. If it's a problem we can fix it.</p></li>
++        </ol>
++
+   <h4>The next section</h4>
+ 
++        <ol>
++         <li><p>Since we're out of the dependencies section, now we're back to formatting list items correctly. This one is too long and should be fixed by the formatter.</p></li>
++        </ol>
++
+         <img src=foo.jpg>

@@ -29,6 +29,7 @@ pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) 
     );
 
     carryover_should_format_bit_where_necessary(&mut lines);
+    exempt_dependencies_section(&mut lines);
     exempt_blocks(&mut lines);
     let unwrapped_lines: Vec<OwnedLine> = unwrap_lines(lines);
     wrap_lines(unwrapped_lines, column_length)
@@ -86,6 +87,28 @@ fn exempt_blocks(lines: &mut Vec<Line>) {
             if contains_close_tag(in_exempt_block, line.contents) {
                 in_exempt_block = "";
             }
+        }
+    }
+}
+
+fn exempt_dependencies_section(lines: &mut Vec<Line>) {
+    let mut in_dependencies : bool = false;
+    for line in lines {
+        if in_dependencies {
+            if line.contents.ends_with("</h4>") {
+                return;
+            }
+
+            // Don't format the contents of new cross-specifications being added
+            // to the dependencies section. These are added via new list items.
+            if line.contents.contains("<li>") || line.contents.contains("<dfn") {
+                line.should_format = false;
+            }
+        }
+
+        if line.contents.ends_with("<h4>Dependencies</h4>") {
+            in_dependencies = true;
+            continue;
         }
     }
 }
