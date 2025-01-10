@@ -1,0 +1,37 @@
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd> 
+   <dd><span>Select element inner content elements</span>.</dd> 
+   <dd><span>Optgroup element inner content elements</span>.</dd>
+   <dd><span>Option element inner content elements</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>flow content</span> is expected.</dd>
+   <dd>As a child of a <code>dl</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>If the element is a child of a <code>dl</code> element: one or more <code>dt</code> elements followed by one or more <code>dd</code> elements, optionally intermixed with <span>script-supporting elements</span>.</dd>
+   <dd>Otherwise, if the element is a descendant of an <code>option</code> element: Zero or more
+   <span>option element inner content elements</span>.</dd>
+   <dd>Otherwise, if the element is a descendant of an <code>optgroup</code> element: Zero or more
+   <span>optgroup element inner content elements</span>.</dd>
+   <dd>Otherwise, if the element is a descendant of a <code>select</code> element: Zero or more
+   <span>select element inner content elements</span>.</dd>
+   <dd>Otherwise: <span>flow content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <!--This line below is not optimal, but it predates the diff so don't wrap it-->
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-div">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-div">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLDivElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+   
+  // <a href="#HTMLDivElement-partial">also has obsolete members</a>
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLDivElement</code>.</dd>
+  </dl>

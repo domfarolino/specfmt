@@ -1,0 +1,14 @@
+diff --git a/testcases/git_diff/dd-addition-terminating-point.in.html b/testcases/git_diff/dd-addition-terminating-point.in.html
+index 824e543..c3929c1 100644
+--- a/testcases/git_diff/dd-addition-terminating-point.in.html
++++ b/testcases/git_diff/dd-addition-terminating-point.in.html
+@@ -10,6 +10,9 @@
+    <dd>As a child of a <code>dl</code> element.</dd>
+    <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+    <dd>If the element is a child of a <code>dl</code> element: one or more <code>dt</code> elements followed by one or more <code>dd</code> elements, optionally intermixed with <span>script-supporting elements</span>.</dd>
++   <dd>Otherwise, if the element is a descendant of an <code>option</code> element: Zero or more <span>option element inner content elements</span>.</dd>
++   <dd>Otherwise, if the element is a descendant of an <code>optgroup</code> element: Zero or more <span>optgroup element inner content elements</span>.</dd>
++   <dd>Otherwise, if the element is a descendant of a <code>select</code> element: Zero or more <span>select element inner content elements</span>.</dd>
+    <dd>Otherwise: <span>flow content</span>.</dd>
+    <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+    <dd><span>Global attributes</span></dd>

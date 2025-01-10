@@ -171,7 +171,7 @@ fn carryover_should_format_bit_where_necessary(lines: &mut Vec<Line>) {
             //
             // TODO(domfarolino): Consider using `must_break` below instead of
             // the specific end-p condition.
-            if lines[i].contents.trim().is_empty() || lines[i].contents.trim().ends_with("</p>") {
+            if lines[i].contents.trim().is_empty() || must_break(lines[i].contents ){
                 should_format_current_line = false;
             }
         }
