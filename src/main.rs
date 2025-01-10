@@ -195,7 +195,7 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
         .arg(directory)
         .arg("diff")
         .arg("-U0")
-        .arg(base_branch)
+        .arg(format!("{base_branch}...{current_branch}"))
         .arg(filename_without_path)
         .output()
         .expect("Failed to compute `git diff`");
