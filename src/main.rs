@@ -172,9 +172,15 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
 
     let mut base_branch: &str = "";
     for branch in branches {
-        if branch == "master" || branch == "main" {
+        // Prioritize "main" derivatives over "master".
+        if branch == "origin/main" || branch == "main" {
             base_branch = branch;
             break;
+        }
+        if branch == "origin/master" || branch == "master" && base_branch.is_empty() {
+            // If we found a "master" derivative, then hold onto it for now, but
+            // keep looking in case we find a "main" one later.
+            base_branch = branch;
         }
     }
 
@@ -187,6 +193,7 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
         ));
     }
 
+    println!("Found '{}' as the base branch to compute diff", base_branch);
     // Finally, compute the diff between `current_branch` and `base_branch`.
     // Return the diff so we can inform the rewrapper of which lines to format
     // (as to avoid rewrapping the *entire* spec).
