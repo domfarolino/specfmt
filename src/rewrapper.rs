@@ -36,31 +36,22 @@ pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) 
 }
 
 fn open_exempt_tag(line: &str) -> &str {
-    // Define all possible exempt tags
-    let exempt_tags = [
+    const EXEMPT_TAGS: [&str; 7] = [
         "<!--",
         "<pre",
-        "<xmp", 
+        "<xmp",
         "<style",
         "<script",
         "<svg",
-        "<table"
+        "<table",
     ];
 
-    // Find the first occurring tag and its position
-    let mut first_tag = "";
-    let mut first_pos = usize::MAX;
-
-    for &tag in exempt_tags.iter() {
-        if let Some(pos) = line.find(tag) {
-            if pos < first_pos {
-                first_pos = pos;
-                first_tag = tag;
-            }
-        }
-    }
-
-    first_tag
+    EXEMPT_TAGS
+        .iter()
+        .min_by_key(|&&tag| line.find(tag).unwrap_or(usize::MAX))
+        .filter(|&&tag| line.contains(tag))
+        .copied()
+        .unwrap_or("")
 }
 
 fn contains_close_tag(open_tag: &str, line: &str) -> bool {
