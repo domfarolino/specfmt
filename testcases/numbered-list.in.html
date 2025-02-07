@@ -11,6 +11,18 @@
 50000. Finally testing a case where we have multiple numbers: 123 456 789 and some other text that should wrap while maintaining proper indentation alignment with the text. 
 
 
+Also markdown lines starting with * should be handled like numbered lists:
+* This
+* This line is way too long fjaslk fekljaf kwejfk wejlkfj ewklfjweklf jawelkjfawekljf awelkj fwaklejfaeklwjfklewja
+  * The other
+
+And lists with spacing like this:
+* This
+
+* This line is way too long fjaslk fekljaf kwejfk wejlkfj ewklfjweklf jawelkjfawekljf awelkj fwaklejfaeklwjfklewja
+
+  * The other
+
 
 The case with no new lines:
 
@@ -23,3 +35,25 @@ The case with no new lines:
 5. Finally testing a case where we have multiple numbers: 123 456 789 and some other text that should wrap while maintaining proper indentation alignment with the text. 
 50000. Finally testing a case where we have multiple numbers: 123 456 789 and some other text that should wrap while maintaining proper indentation alignment with the text. 
 
+Suboptimally-wrapped lists:
+
+1. Suboptimally wrapped
+lines like this get smooshed upwards and wrapped correctly, because the top line that is suboptimally wrapped is not treated as must-break.
+2. But numbered lines *after*
+   are treated as though they must start on a new line, so there
+   is no risk
+   of this list item getting smooshed up to the first one.
+
+* Suboptimally wrapped
+UNORDERED lines like this get smooshed upwards and wrapped correctly, because the top line that is suboptimally wrapped is not treated as must-break.
+* But numbered lines *after*
+  are treated as though they must start on a new line, so there
+  is no risk
+  of this list item getting smooshed up to the first one.
+
+1. Numbered list
+   * With interleaved unordered list that is
+suboptimally wrapped
+   * And all of this
+     is still formatted correctly
+2. This line remains untouched
