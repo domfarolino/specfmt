@@ -111,13 +111,20 @@ lazy_static! {
     static ref SINGLE_TAG: Regex = Regex::new(r#"^</?[a-z-A-Z "=]+>$"#).unwrap();
     static ref FULL_DT_TAG: Regex = Regex::new(r#"<dt.*>.*</dt>$"#).unwrap();
     static ref HEADER_TAG: Regex = Regex::new(r#"<h[0-6].*>.*</h[0-6]>$"#).unwrap();
+    static ref NUMBERED_LIST_ITEM: Regex = Regex::new(r"^\s*\d+\.\s").unwrap();
 }
+
 fn is_standalone_line(line: &str) -> bool {
     line.is_empty()
         || SINGLE_TAG.is_match(line)
         || FULL_DT_TAG.is_match(line)
         || HEADER_TAG.is_match(line)
 }
+
+fn is_numbered_list_item(line: &str) -> bool {
+    NUMBERED_LIST_ITEM.is_match(line)
+}
+
 // This differs from `is_standalone_line()` in that it is a weaker check. If
 // `is_standalone_line()` is true, then we prevent:
 //   (a): The current line from being appended to the end of earlier lines
@@ -132,7 +139,9 @@ fn must_break(line: &str) -> bool {
         || line.ends_with("</dt>")
         || line.ends_with("</dd>")
         || line.ends_with("-->")
+        || is_numbered_list_item(line.trim_start())
 }
+
 fn exempt_from_wrapping(line: &str) -> bool {
     FULL_DT_TAG.is_match(line)
 }
@@ -231,11 +240,20 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
 
     let line = line.trim_start();
 
+    let extra_indent = if is_numbered_list_item(line) {
+        let pos = line.find(". ").map(|p| p + 2).unwrap_or(0);
+        " ".repeat(pos)
+    } else {
+        String::new()
+    };
+
     let mut words = line.split(' ');
     // This will never panic; even if `line` is empty after we trim it, the
     // split collection will contain a single empty string. See
     // https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=1035caa5a7a4324272c8966d36d323b4.
-    let mut current_line = indent.clone() + words.next().unwrap();
+    let first_word = words.next().unwrap();
+    let mut current_line = indent.clone() + first_word;
+
     for word in words {
         if current_line.len() + 1 + word.len() <= column_length.into() {
             current_line.push_str(&(" ".to_owned() + word));
@@ -243,8 +261,7 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
             if current_line != indent {
                 return_lines.push(current_line);
             }
-            current_line = indent.clone();
-            current_line.push_str(word);
+            current_line = indent.clone() + &extra_indent + word;
         }
     }
 
