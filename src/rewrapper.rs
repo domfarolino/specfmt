@@ -135,8 +135,9 @@ fn is_definition_desc(line: &str) -> bool {
     DEFINITION_DESC.is_match(line)
 }
 
-// Add a new function to check if a line starts should start on a new line. This is kind of the inverse of
-// `must_break()`; see the documentation above that function for more details.
+// Add a new function to check if a line starts should start on a new line. This
+// is kind of the inverse of `must_break()`; see the documentation above that
+// function for more details.
 fn must_start_on_new_line(line: &str) -> bool {
     is_definition_term(line) || is_definition_desc(line) || is_numbered_list_item(line)
 }
@@ -257,8 +258,9 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
 
     let line = line.trim_start();
 
-    // Calculate extra indentation. This may be computed by combining extra indentation from BOTH definition
-    // description (3 spaces) *and* list indentation (2 spaces) if needed.
+    // Calculate extra indentation. This may be computed by combining extra
+    // indentation from BOTH definition description (3 spaces) *and* list
+    // indentation (2 spaces) if needed.
     let extra_indent = if is_definition_desc(line) {
         let desc_pos = line.find(":: ").map(|p| p + 3).unwrap_or(0);
         if is_numbered_list_item(&line[desc_pos..]) {
