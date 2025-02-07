@@ -1,0 +1,31 @@
+diff --git a/testcases/git_diff/addition-in-middle-of-p-does-not-look-upward.in.html b/testcases/git_diff/addition-in-middle-of-p-does-not-look-upward.in.html
+index cdcdadd..6594e86 100644
+--- a/testcases/git_diff/addition-in-middle-of-p-does-not-look-upward.in.html
++++ b/testcases/git_diff/addition-in-middle-of-p-does-not-look-upward.in.html
+@@ -2,7 +2,7 @@
+       and all of these lines after it are also
+       pre-existing. But the point is that in the
+       middle of this suboptimally-wrapped paragraph,
+-      a bunch of new text is inserted () and the rest
++      a bunch of new text is inserted (RIGHT HERE) and the rest
+       of the paragraph is then optimally wrapped to 100
+       columns. This bifurcates the paragraph into two halves,
+       the suboptimal half before the insertions, and the
+@@ -11,7 +11,7 @@
+       and all of these lines after it are also
+       pre-existing. But the point is that in the
+       middle of this suboptimally-wrapped paragraph,
+-      a bunch of new text is inserted () and the rest
++      a bunch of new text is inserted (RIGHT HERE RIGHT HERE RIGHT HERE RIGHT HERE RIGHT HERE RIGHT HERE) and the rest
+       of the paragraph is then optimally wrapped to 100
+       columns. This bifurcates the paragraph into two halves,
+       the suboptimal half before the insertions, and the
+@@ -21,7 +21,7 @@
+       and all of these lines after it are also
+       pre-existing. But the point is that in the
+       middle of this suboptimally-wrapped paragraph,
+-      a bunch of new text is inserted () and the rest
++      a bunch of new text is inserted (RIGHT HERE RIGHT HERE RIGHT HERE) and the rest
+       of the paragraph is then optimally wrapped to 100
+       columns. This bifurcates the paragraph into two halves,
+       the suboptimal half before the insertions, and the

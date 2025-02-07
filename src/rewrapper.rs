@@ -112,6 +112,8 @@ lazy_static! {
     static ref FULL_DT_TAG: Regex = Regex::new(r#"<dt.*>.*</dt>$"#).unwrap();
     static ref HEADER_TAG: Regex = Regex::new(r#"<h[0-6].*>.*</h[0-6]>$"#).unwrap();
     static ref NUMBERED_LIST_ITEM: Regex = Regex::new(r"^\s*\d+\.\s").unwrap();
+    static ref DEFINITION_TERM: Regex = Regex::new(r"^\s*:\s").unwrap();
+    static ref DEFINITION_DESC: Regex = Regex::new(r"^\s*::\s").unwrap();
 }
 
 fn is_standalone_line(line: &str) -> bool {
@@ -123,6 +125,21 @@ fn is_standalone_line(line: &str) -> bool {
 
 fn is_numbered_list_item(line: &str) -> bool {
     NUMBERED_LIST_ITEM.is_match(line)
+}
+
+fn is_definition_term(line: &str) -> bool {
+    DEFINITION_TERM.is_match(line)
+}
+
+fn is_definition_desc(line: &str) -> bool {
+    DEFINITION_DESC.is_match(line)
+}
+
+// Add a new function to check if a line starts should start on a new line. This
+// is kind of the inverse of `must_break()`; see the documentation above that
+// function for more details.
+fn must_start_on_new_line(line: &str) -> bool {
+    is_definition_term(line) || is_definition_desc(line) || is_numbered_list_item(line)
 }
 
 // This differs from `is_standalone_line()` in that it is a weaker check. If
@@ -140,6 +157,7 @@ fn must_break(line: &str) -> bool {
         || line.ends_with("</dd>")
         || line.ends_with("-->")
         || is_numbered_list_item(line.trim_start())
+        || is_definition_term(line.trim_start())
 }
 
 fn exempt_from_wrapping(line: &str) -> bool {
@@ -192,7 +210,7 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
             });
             previous_line_smushable = false;
         } else {
-            if previous_line_smushable && line.should_format {
+            if previous_line_smushable && line.should_format && !must_start_on_new_line(line.contents.trim()) {
                 assert_ne!(return_lines.len(), 0);
                 let n = return_lines.len();
                 // If we're unwrapping this line by tacking it onto the end of
@@ -240,8 +258,23 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
 
     let line = line.trim_start();
 
-    let extra_indent = if is_numbered_list_item(line) {
+    // Calculate extra indentation. This may be computed by combining extra
+    // indentation from BOTH definition description (3 spaces) *and* list
+    // indentation (2 spaces) if needed.
+    let extra_indent = if is_definition_desc(line) {
+        let desc_pos = line.find(":: ").map(|p| p + 3).unwrap_or(0);
+        if is_numbered_list_item(&line[desc_pos..]) {
+            // Add both the definition description indent and the numbered list indent
+            let list_pos = line[desc_pos..].find(". ").map(|p| p + 2).unwrap_or(0);
+            " ".repeat(desc_pos + list_pos)
+        } else {
+            " ".repeat(desc_pos)
+        }
+    } else if is_numbered_list_item(line) {
         let pos = line.find(". ").map(|p| p + 2).unwrap_or(0);
+        " ".repeat(pos)
+    } else if is_definition_term(line) {
+        let pos = line.find(": ").map(|p| p + 2).unwrap_or(0);
         " ".repeat(pos)
     } else {
         String::new()
