@@ -218,7 +218,7 @@ fn unwrap_lines(lines: Vec<Line>) -> Vec<OwnedLine> {
 fn wrap_lines(lines: Vec<OwnedLine>, column_length: u8) -> Vec<String> {
     let mut rewrapped_lines: Vec<String> = Vec::new();
     for line in lines.iter() {
-        if line.contents.len() <= column_length.into()
+        if line.contents.chars().count() <= column_length.into()
             || exempt_from_wrapping(&line.contents)
             || !line.should_format
         {
@@ -255,7 +255,7 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
     let mut current_line = indent.clone() + first_word;
 
     for word in words {
-        if current_line.len() + 1 + word.len() <= column_length.into() {
+        if current_line.chars().count() + 1 + word.chars().count() <= column_length.into() {
             current_line.push_str(&(" ".to_owned() + word));
         } else {
             if current_line != indent {
