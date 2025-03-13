@@ -111,7 +111,7 @@ lazy_static! {
     static ref SINGLE_TAG: Regex = Regex::new(r#"^</?[a-z-A-Z "=]+>$"#).unwrap();
     static ref FULL_DT_TAG: Regex = Regex::new(r#"<dt.*>.*</dt>$"#).unwrap();
     static ref HEADER_TAG: Regex = Regex::new(r#"<h[0-6].*>.*</h[0-6]>$"#).unwrap();
-    static ref NUMBERED_LIST_ITEM: Regex = Regex::new(r"^\s*\d+\.\s").unwrap();
+    static ref NUMBERED_LIST_ITEM: Regex = Regex::new(r"[0-9]+[.]?[0-9]*\.\s").unwrap();
     static ref UNORDERED_LIST_ITEM: Regex = Regex::new(r"^\s*\*\s").unwrap();
     static ref DEFINITION_TERM: Regex = Regex::new(r"^\s*:\s").unwrap();
     static ref DEFINITION_DESC: Regex = Regex::new(r"^\s*::\s").unwrap();
@@ -195,7 +195,7 @@ fn carryover_should_format_bit_where_necessary(lines: &mut Vec<Line>) {
             //
             // TODO(domfarolino): Consider using `must_break` below instead of
             // the specific end-p condition.
-            if lines[i].contents.trim().is_empty() || must_break(lines[i].contents ){
+            if lines[i].contents.trim().is_empty() || must_break(lines[i].contents) {
                 should_format_current_line = false;
             }
         }
