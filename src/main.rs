@@ -65,7 +65,7 @@ struct Args {
     #[arg(long, default_value_t = false)]
     full_spec: bool,
 
-    /// Base branch to compare with.
+    /// Base branch to compare the current branch with.
     #[arg(long)]
     base_branch: Option<String>,
 }
@@ -162,7 +162,7 @@ fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap
     let current_branch = String::from_utf8(current_branch.stdout).unwrap();
     let current_branch = current_branch.trim();
 
-    let base_branch_to_use = if let Some(branch) = base_branch_opt {
+    let base_branch = if let Some(branch) = base_branch_opt {
         branch
     } else {
         // Get the base branch to compare `current_branch` to with in `git diff`. We
@@ -207,7 +207,7 @@ fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap
         computed_base
     };
 
-    println!("Found '{}' as the base branch to compute diff", base_branch_to_use);
+    println!("Found '{}' as the base branch to compute diff", base_branch);
     // Finally, compute the diff between `current_branch` and `base_branch`.
     // Return the diff so we can inform the rewrapper of which lines to format
     // (as to avoid rewrapping the *entire* spec).
@@ -216,7 +216,7 @@ fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap
         .arg(directory)
         .arg("diff")
         .arg("-U0")
-        .arg(format!("{base_branch_to_use}...{current_branch}"))
+        .arg(format!("{base_branch}...{current_branch}"))
         .arg(filename_without_path)
         .output()
         .expect("Failed to compute `git diff`");
