@@ -64,6 +64,10 @@ struct Args {
     /// Reformat the entire spec, not scoped to the changes of the current branch.
     #[arg(long, default_value_t = false)]
     full_spec: bool,
+
+    /// Base branch to compare with.
+    #[arg(long)]
+    base_branch: Option<String>,
 }
 
 fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Error> {
@@ -141,7 +145,7 @@ fn assert_no_uncommitted_changes(path: &Path) -> Result<(), clap::error::Error> 
 // If there are no errors, this returns the computed diff of the target spec's
 // current branch and base branch (master or main). The output should be
 // filtered by `sanitized_diff_lines()`.
-fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
+fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap::error::Error> {
     // Extract the filename itself, as well as the directory from `path`.
     assert!(path.is_file());
     let filename_without_path = path.file_name().unwrap().to_str().unwrap();
@@ -158,42 +162,52 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
     let current_branch = String::from_utf8(current_branch.stdout).unwrap();
     let current_branch = current_branch.trim();
 
-    // Get the base branch to compare `current_branch` to with in `git diff`. We
-    // expect it to be either `master` or `main`, and fail otherwise.
-    let branches = std::process::Command::new("git")
-        .arg("-C")
-        .arg(directory)
-        .arg("for-each-ref")
-        .arg("--format=%(refname:short)")
-        .output()
-        .expect("Failed to find the base branch to compare current branch '${}' with");
-    let branches = String::from_utf8(branches.stdout).unwrap();
-    let branches = branches.split('\n');
+    let base_branch_to_use = if let Some(branch) = base_branch_opt {
+        branch
+    } else {
+        // Get the base branch to compare `current_branch` to with in `git diff`. We
+        // expect it to be either `master` or `main`, and fail otherwise.
+        let branches = std::process::Command::new("git")
+            .arg("-C")
+            .arg(directory)
+            .arg("for-each-ref")
+            .arg("--format=%(refname:short)")
+            .output()
+            .expect("Failed to find the base branch to compare current branch '${}' with");
+        let branches = String::from_utf8(branches.stdout).unwrap();
+        let branches = branches.split('\n');
 
-    let mut base_branch: &str = "";
-    for branch in branches {
-        // Prioritize "main" derivatives over "master".
-        if branch == "origin/main" || branch == "main" {
-            base_branch = branch;
-            break;
+        let mut computed_base = String::new();
+        for branch in branches {
+            if branch == "origin/main" {
+                computed_base = branch.to_string();
+                break;
+            }
+            // Prioritize "main" derivatives over "master", but don't stop looking
+            // for "origin/main". That seems to be needed in most forks.
+            if branch == "origin/main" || branch == "main" {
+                computed_base = branch.to_string();
+            }
+            // Only use derivatives of "master" if we haven't selected anything else.
+            if branch == "origin/master" || branch == "master" && computed_base.is_empty() {
+                // If we found a "master" derivative, then hold onto it for now, but
+                // keep looking in case we find a "main" one later.
+                computed_base = branch.to_string();
+            }
         }
-        if branch == "origin/master" || branch == "master" && base_branch.is_empty() {
-            // If we found a "master" derivative, then hold onto it for now, but
-            // keep looking in case we find a "main" one later.
-            base_branch = branch;
+
+        // Could not find a branch named derived from either `master` or `main`.
+        // This configuration is considered invalid.
+        if computed_base.is_empty() {
+            return Err(Args::command().error(
+                clap::error::ErrorKind::ValueValidation,
+                format!("Cannot find a 'master' or 'main' base branch with which to compare the current branch '{}'of the spec", current_branch),
+            ));
         }
-    }
+        computed_base
+    };
 
-    // Could not find a branch named `master` or `main`. This configuration is
-    // considered invalid.
-    if base_branch.is_empty() {
-        return Err(Args::command().error(
-            clap::error::ErrorKind::ValueValidation,
-            format!("Cannot find a 'master' or 'main' base branch with which to compare the current branch '{}'of the spec", current_branch),
-        ));
-    }
-
-    println!("Found '{}' as the base branch to compute diff", base_branch);
+    println!("Found '{}' as the base branch to compute diff", base_branch_to_use);
     // Finally, compute the diff between `current_branch` and `base_branch`.
     // Return the diff so we can inform the rewrapper of which lines to format
     // (as to avoid rewrapping the *entire* spec).
@@ -202,7 +216,7 @@ fn git_diff(path: &Path) -> Result<String, clap::error::Error> {
         .arg(directory)
         .arg("diff")
         .arg("-U0")
-        .arg(format!("{base_branch}...{current_branch}"))
+        .arg(format!("{base_branch_to_use}...{current_branch}"))
         .arg(filename_without_path)
         .output()
         .expect("Failed to compute `git diff`");
@@ -254,8 +268,9 @@ fn main() {
         assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
     }
 
+    let base_branch = args.base_branch;
     let diff = if !args.full_spec {
-        git_diff(&filename).unwrap_or_else(|err| err.exit())
+        git_diff(&filename, base_branch).unwrap_or_else(|err| err.exit())
     } else {
         String::from("")
     };
