@@ -268,9 +268,8 @@ fn main() {
         assert_no_uncommitted_changes(&filename).unwrap_or_else(|err| err.exit());
     }
 
-    let base_branch = args.base_branch;
     let diff = if !args.full_spec {
-        git_diff(&filename, base_branch).unwrap_or_else(|err| err.exit())
+        git_diff(&filename, args.base_branch).unwrap_or_else(|err| err.exit())
     } else {
         String::from("")
     };
