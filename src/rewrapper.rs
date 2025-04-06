@@ -112,7 +112,7 @@ lazy_static! {
     static ref FULL_DT_TAG: Regex = Regex::new(r#"<dt.*>.*</dt>$"#).unwrap();
     static ref HEADER_TAG: Regex = Regex::new(r#"<h[0-6].*>.*</h[0-6]>$"#).unwrap();
     static ref NUMBERED_LIST_ITEM: Regex = Regex::new(r"[0-9]+[.]?[0-9]*\.\s").unwrap();
-    static ref UNORDERED_LIST_ITEM: Regex = Regex::new(r"^\s*\*\s").unwrap();
+    static ref UNORDERED_LIST_ITEM: Regex = Regex::new(r"^\s*[\*-]\s").unwrap();
     static ref DEFINITION_TERM: Regex = Regex::new(r"^\s*:\s").unwrap();
     static ref DEFINITION_DESC: Regex = Regex::new(r"^\s*::\s").unwrap();
 }
@@ -272,7 +272,10 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
             let list_pos = if is_numbered_list_item(&line[desc_pos..]) {
                 line[desc_pos..].find(". ").map(|p| p + 2)
             } else {
-                line[desc_pos..].find("* ").map(|p| p + 2)
+                // Look for either "* " or "- ".
+                line[desc_pos..].find("* ")
+                    .or_else(|| line[desc_pos..].find("- "))
+                    .map(|p| p + 2)
             }.unwrap_or(0);
             " ".repeat(desc_pos + list_pos)
         } else {
@@ -282,7 +285,11 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
         let pos = line.find(". ").map(|p| p + 2).unwrap_or(0);
         " ".repeat(pos)
     } else if is_unordered_list_item(line) {
-        let pos = line.find("* ").map(|p| p + 2).unwrap_or(0);
+        // Find position of either "* " or "- ".
+        let pos = line.find("* ")
+            .or_else(|| line.find("- "))
+            .map(|p| p + 2)
+            .unwrap_or(0);
         " ".repeat(pos)
     } else if is_definition_term(line) {
         let pos = line.find(": ").map(|p| p + 2).unwrap_or(0);
