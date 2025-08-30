@@ -268,6 +268,10 @@ fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
             current_line_number += 1;
         }
         // For lines starting with space, increment (these are unchanged lines in new file)
+        // TODO(domfarolino): This should not be necessary, because the way this tool generates
+        // the git diff does not include any unchanged context lines. This is only necessary
+        // because the git_diff tests were generated with context lines. We should rebaseline
+        // all of those tests and remove this condition.
         else if line.starts_with(' ') {
             current_line_number += 1;
         }
