@@ -68,6 +68,10 @@ struct Args {
     /// Base branch to compare the current branch with.
     #[arg(long)]
     base_branch: Option<String>,
+
+    /// Enable verbose debugging output for troubleshooting git diff parsing.
+    #[arg(long, default_value_t = false)]
+    verbose: bool,
 }
 
 fn default_filename(filename: Option<String>) -> Result<PathBuf, clap::error::Error> {
@@ -281,23 +285,36 @@ fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap
 // - Add line 7 to result, increment to line 8
 //
 // Result: `[6, 7]` (lines 6 and 7 in the source file that need formatting)
-fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
+fn parse_diff_line_numbers(diff: &str, verbose: bool) -> Vec<usize> {
     let mut line_numbers = Vec::new();
     let mut current_line_number = 0;
 
-    for line in diff.split('\n') {
+    if verbose {
+        eprintln!("DEBUG PARSING: Starting to parse diff with {} lines", diff.lines().count());
+    }
+
+    for (line_index, line) in diff.split('\n').enumerate() {
         // Skip header lines (don't increment line numbers)
         if line.starts_with("+++") || line.starts_with("---") || line.starts_with("index") || line.starts_with("diff") {
+            if verbose {
+                eprintln!("DEBUG PARSING: Skipping header line: '{}'", line);
+            }
             continue;
         }
 
         // Parse @@ lines to get the line number context
         if line.starts_with("@@") {
+            if verbose {
+                eprintln!("DEBUG PARSING: Found @@ line {}: '{}'", line_index, line);
+            }
             // Extract the line number from @@ -old_start,old_count +new_start,new_count @@
             if let Some(plus_part) = line.split("@@").nth(1) {
                 if let Some(plus_section) = plus_part.split_whitespace().find(|s| s.starts_with('+')) {
                     if let Some(line_num_str) = plus_section.split(',').next() {
                         if let Ok(line_num) = line_num_str[1..].parse::<usize>() {
+                            if verbose {
+                                eprintln!("DEBUG PARSING: Parsed line number from @@: {} -> current_line_number = {}", line_num_str, line_num);
+                            }
                             current_line_number = line_num;
                         }
                     }
@@ -306,8 +323,18 @@ fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
         }
         // For lines starting with +, add the current line number
         else if line.starts_with('+') {
+            if verbose {
+                eprintln!("DEBUG PARSING: Found + line at current_line_number {}: '{}'", current_line_number, line);
+                eprintln!("DEBUG PARSING: Added line {} to list, incrementing current_line_number from {} to {}", current_line_number, current_line_number, current_line_number + 1);
+            }
             line_numbers.push(current_line_number);
             current_line_number += 1;
+        }
+        // For lines starting with -, don't increment (these are deletions from old file)
+        else if line.starts_with('-') {
+            if verbose {
+                eprintln!("DEBUG PARSING: Found - line (deletion), NOT incrementing current_line_number: '{}'", line);
+            }
         }
         // For lines starting with space, increment (these are unchanged lines in new file)
         // TODO(domfarolino): This should not be necessary, because the way this tool generates
@@ -315,8 +342,15 @@ fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
         // because the git_diff tests were generated with context lines. We should rebaseline
         // all of those tests and remove this condition.
         else if line.starts_with(' ') {
+            if verbose {
+                eprintln!("DEBUG PARSING: Found space line (unchanged), incrementing current_line_number from {} to {}", current_line_number, current_line_number + 1);
+            }
             current_line_number += 1;
         }
+    }
+
+    if verbose {
+        eprintln!("DEBUG PARSING: Final line_numbers list has {} entries", line_numbers.len());
     }
 
     line_numbers
@@ -326,10 +360,22 @@ fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
 // from the diff. This algorithm is precise because it uses line numbers
 // instead of content matching, avoiding the duplicate line issue described
 // in https://github.com/domfarolino/specfmt/issues/7.
-fn apply_diff(lines: &mut Vec<Line>, diff_line_numbers: &Vec<usize>) {
+fn apply_diff(lines: &mut Vec<Line>, diff_line_numbers: &Vec<usize>, verbose: bool) {
+    if diff_line_numbers.is_empty() && verbose {
+        println!("DEBUG: No lines to format");
+        return;
+    }
+
+    if verbose {
+        println!("DEBUG: Applying diff to {} lines, targeting line numbers: {:?}", lines.len(), diff_line_numbers);
+    }
+
     for (i, line) in lines.iter_mut().enumerate() {
         let line_number = i + 1; // Convert to 1-based indexing
         if diff_line_numbers.contains(&line_number) {
+            if verbose {
+                println!("DEBUG: Marking line {} for formatting: '{}'", line_number, line.contents);
+            }
             line.should_format = true;
         }
     }
@@ -349,7 +395,7 @@ fn main() {
         String::from("")
     };
     let diff_line_numbers = if !args.full_spec {
-        parse_diff_line_numbers(&diff)
+        parse_diff_line_numbers(&diff, args.verbose)
     } else {
         Vec::new()
     };
@@ -372,7 +418,7 @@ fn main() {
         })
         .collect();
 
-    apply_diff(&mut lines, &diff_line_numbers);
+    apply_diff(&mut lines, &diff_line_numbers, args.verbose);
 
     let num_lines_to_format = if args.full_spec {
         lines.len()
@@ -464,8 +510,8 @@ mod test {
             .collect();
         let length = lines.len();
 
-        let diff_line_numbers = parse_diff_line_numbers(&diff_string);
-        apply_diff(&mut lines, &diff_line_numbers);
+        let diff_line_numbers = parse_diff_line_numbers(&diff_string, false);
+        apply_diff(&mut lines, &diff_line_numbers, false);
 
         // Initiate unwrapping/rewrapping.
         let wrapped_lines = rewrapper::rewrap_lines(lines, length, 100);
