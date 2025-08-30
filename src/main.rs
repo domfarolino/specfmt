@@ -224,6 +224,7 @@ fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap
     Ok(String::from_utf8(git_diff.stdout).unwrap())
 }
 
+
 // Parse git diff output to extract line numbers that were added/modified.
 //
 // This function implements a line-by-line parser that tracks the relationship between
@@ -285,6 +286,7 @@ fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
     let mut line_numbers = Vec::new();
     let mut current_line_number = 0;
 
+
     for line in diff.split('\n') {
         // Skip header lines (don't increment line numbers)
         if line.starts_with("+++") || line.starts_with("---") || line.starts_with("index") || line.starts_with("diff") {
@@ -308,6 +310,10 @@ fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
         else if line.starts_with('+') {
             line_numbers.push(current_line_number);
             current_line_number += 1;
+        }
+        // For lines starting with -, don't increment (these are deletions from old file)
+        else if line.starts_with('-') {
+            // Don't increment line number for deletions
         }
         // For lines starting with space, increment (these are unchanged lines in new file)
         // TODO(domfarolino): This should not be necessary, because the way this tool generates
