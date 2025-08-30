@@ -230,9 +230,9 @@ fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap
 fn sanitized_diff_lines(diff: &str) -> Vec<&str> {
     diff.split('\n')
         .enumerate()
-        // Strip the first 4 version control lines, and only consider lines
+        // Strip the first 5 version control lines, and only consider lines
         // prefixed with "+" that are more than one character long.
-        .filter(|&(i, line)| i > 3 && line.starts_with('+') && line.len() > 1)
+        .filter(|&(i, line)| i > 4 && line.starts_with('+') && line.len() > 1)
         // Remove the "+" version control prefix.
         .map(|(_, line)| &line[1..])
         .collect()
