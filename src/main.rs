@@ -267,10 +267,6 @@ fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
             line_numbers.push(current_line_number);
             current_line_number += 1;
         }
-        // For lines starting with -, don't increment (these are deletions from old file)
-        else if line.starts_with('-') {
-            // Don't increment line number for deletions
-        }
         // For lines starting with space, increment (these are unchanged lines in new file)
         else if line.starts_with(' ') {
             current_line_number += 1;
