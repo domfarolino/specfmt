@@ -224,20 +224,6 @@ fn git_diff(path: &Path, base_branch_opt: Option<String>) -> Result<String, clap
     Ok(String::from_utf8(git_diff.stdout).unwrap())
 }
 
-// Takes the `&str` output of `git_diff` above, and filters out irrelevant
-// lines. Cannot be a part of `git_diff` because this returns a vector of string
-// slices (for efficiency) on top of strings allocated inside of `git_diff`.
-fn sanitized_diff_lines(diff: &str) -> Vec<&str> {
-    diff.split('\n')
-        .enumerate()
-        // Strip the first 5 version control lines, and only consider lines
-        // prefixed with "+" that are more than one character long.
-        .filter(|&(i, line)| i > 4 && line.starts_with('+') && line.len() > 1)
-        // Remove the "+" version control prefix.
-        .map(|(_, line)| &line[1..])
-        .collect()
-}
-
 // Parse git diff output to extract line numbers that were added/modified.
 //
 // This function implements a line-by-line parser that tracks the relationship between
