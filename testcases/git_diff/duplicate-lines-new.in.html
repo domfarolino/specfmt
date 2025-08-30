@@ -1,0 +1,25 @@
+  <ul>
+    <li><p>Omitting the attribute, setting it to the empty string, or setting it to a
+    <span>JavaScript MIME type essence match</span> means that the script is a <span>classic
+    script</span>, to be interpreted according to the JavaScript <i
+    data-x="js-prod-Script">Script</i> top-level production. Authors should omit the <code
+    data-x="attr-script-type">type</code> attribute instead of redundantly setting it.</p></li>
+
+    <li><p>Setting the attribute to an <span>ASCII case-insensitive</span> match for "<code
+    data-x="">module</code>" means that the script is a <span>JavaScript module script</span>, to
+    be interpreted according to the JavaScript <i data-x="js-prod-Module">Module</i> top-level
+    production.</p></li>
+
+    <li><p>Setting the attribute to an <span>ASCII case-insensitive</span> match for "<code
+    data-x="">importmap</code>" means that the script is an <span>import map</span>, containing
+    JSON that will be used to control the behavior of <span data-x="resolve a module
+    specifier">module specifier resolution</span>.</p></li>
+
+    <li><p>Setting the attribute to an <span>ASCII case-insensitive</span> match for "<code
+    data-x="">speculationrules</code>" means that the script defines a <span>speculation rule
+    set</span>, containing JSON that will be used to describe <a
+    href="#speculative-loading">speculative loads</a>.</p></li>
+
+    <li>
+     <p>Setting the attribute to any other value means that the script is a <dfn>data block</dfn>,
+     which is not processed by the user agent, but instead by author script or other tools.

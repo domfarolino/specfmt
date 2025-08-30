@@ -1,8 +1,9 @@
 diff --git a/testcases/git_diff/addition-in-middle-of-p.in.html b/testcases/git_diff/addition-in-middle-of-p.in.html
-index e69351f..f550f33 100644
+index 3af04a4..9e32de6 100644
 --- a/testcases/git_diff/addition-in-middle-of-p.in.html
 +++ b/testcases/git_diff/addition-in-middle-of-p.in.html
-@@ -1,6 +1,6 @@
+@@ -4,7 +4,7 @@ the subsequent lines may need reformatting after we format the single line with
+ 
  
                            <p>This is my specification and it is intended for authors of documents
 -                          and scripts that use the features defined in this specification and so on

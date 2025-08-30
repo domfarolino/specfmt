@@ -1,0 +1,2487 @@
+diff --git a/source b/source
+index 4700eb17..b9f22594 100644
+--- a/source
++++ b/source
+@@ -2511,0 +2512,13 @@ <h4>Dependencies</h4>
++   <dt>URL Pattern</dt>
++
++   <dd>
++    <p>The following terms are defined in <cite>URL Pattern</cite>: <ref>URLPATTERN</ref></p>
++
++    <ul class="brief">
++     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#url-pattern">URL pattern</dfn></li>
++     <li><dfn data-x="url-pattern-match" data-x-href="https://urlpattern.spec.whatwg.org/#url-pattern-match">match</dfn></li>
++     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#build-a-url-pattern-from-an-infra-value">build a URL pattern from an Infra value</dfn></li>
++     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#parse-a-constructor-string">parse a URL pattern constructor string</dfn></li>
++     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#dictdef-urlpatterninit"><code>URLPatternInit</code></dfn></li>
++    </ul>
++   </dd>
+@@ -2552 +2565 @@ <h4>Dependencies</h4>
+-     <li><dfn data-x="http-structured-header-token" data-x-href="https://httpwg.org/specs/rfc8941.html#token">token</dfn></li>
++     <li><dfn data-x="http-structured-header-list" data-x-href="https://httpwg.org/specs/rfc8941.html#list">list</dfn></li>
+@@ -2553,0 +2567,2 @@ <h4>Dependencies</h4>
++     <li><dfn data-x="http-structured-header-string" data-x-href="https://httpwg.org/specs/rfc8941.html#string">string</dfn></li>
++     <li><dfn data-x="http-structured-header-token" data-x-href="https://httpwg.org/specs/rfc8941.html#token">token</dfn></li>
+@@ -2584,0 +2600 @@ <h4>Dependencies</h4>
++     <li>`<dfn data-x-href="https://fetch.spec.whatwg.org/#sec-purpose-header"><code>Sec-Purpose</code></dfn>`</li>
+@@ -2626,0 +2643 @@ <h4>Dependencies</h4>
++     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#credentials">credentials</dfn></li>
+@@ -2739,0 +2757,15 @@ <h4>Dependencies</h4>
++   <dt>The No-Vary-Search HTTP Response Header Field</dt>
++
++   <dd>
++    <p>The following terms are defined in <cite>The No-Vary-Search HTTP Response Header
++    Field</cite>: <ref>NOVARYSEARCH</ref></p>
++
++    <ul class="brief">
++     <li>`<dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-http-header-field-definitio"><code>No-Vary-Search</code></dfn>`</li>
++     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#parse-a-url-search-variance">parse a URL search variance</dfn></li>
++     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-data-model">URL search variance</dfn></li>
++     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-data-model">default URL search variance</dfn></li>
++     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-comparing">equivalent modulo search variance</dfn></li>
++    </ul>
++   </dd>
++
+@@ -4087,0 +4120,3 @@ <h4>Dependencies</h4>
++     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#typedef-selector-list"><code>&lt;selector-list></code></dfn></li>
++     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#parse-a-selector">parse a selector</dfn></li>
++     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#selector">selector</dfn></li>
+@@ -4095,0 +4131,2 @@ <h4>Dependencies</h4>
++     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#match-a-selector-against-an-element">match a selector against an element</dfn></li>
++     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#scoping-root">scoping root</dfn></li>
+@@ -4532,0 +4570 @@ <h4>Dependencies</h4>
++     <li><dfn data-x-href="https://storage.spec.whatwg.org/#storage-key">storage key</dfn></li>
+@@ -7409,0 +7448,14 @@ <h4>Document base URLs</h4>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <var>descendant</var> of <var>document</var>'s
++    <span data-x="shadow-including descendant">shadow-including descendants</span>:</p>
++
++    <ol>
++     <li><p>If <var>descendant</var> is a <code>script</code> element whose <span
++     data-x="concept-script-result">result</span> is a <span>speculation rules parse result</span>,
++     then <span>update the speculation rules parse result</span> given
++     <var>descendant</var>.</p></li>
++    </ol>
++   </li>
++
++   <li><p><span>Consider speculative loads</span> given <var>document</var>.</p></li>
+@@ -25269,4 +25321,38 @@ <h4>API for <code>a</code> and <code>area</code> elements</h4>
+-  <p>When elements implementing the <code>HTMLHyperlinkElementUtils</code> mixin are created, and
+-  whenever those elements have their <code data-x="attr-hyperlink-href">href</code> content
+-  attribute set, changed, or removed, the user agent must <span
+-  data-x="concept-hyperlink-url-set">set the url</span>.</p>
++  <p>When elements implementing the <code>HTMLHyperlinkElementUtils</code> mixin are created, the
++  user agent must <span data-x="concept-hyperlink-url-set">set the url</span>.</p>
++
++  <p>The <span>HTML element insertion steps</span> for <code>a</code> and <code>area</code>
++  elements, given <var>insertedNode</var>, are:</p>
++
++  <ol>
++   <li><p>If <var>insertedNode</var> is not <span>connected</span>, then return.</p></li>
++
++   <li><p><span>Consider speculative loads</span> given <var>insertedNode</var>'s <span>node
++   document</span>.</p></li>
++  </ol>
++
++  <p>The <span>HTML element removing steps</span> for <code>a</code> and <code>area</code> elements,
++  given <var>removedNode</var> and <var>oldParent</var>, are:</p>
++
++  <ol>
++   <li><p>If <var>oldParent</var> is not <span>connected</span>, then return.</p></li>
++
++   <li><p><span>Consider speculative loads</span> given <var>oldParent</var>'s <span>node
++   document</span>.</p></li>
++  </ol>
++
++  <p>The <span>HTML element moving steps</span> for <code>a</code> and <code>area</code> elements,
++  given <var>movedNode</var>, are:</p>
++
++  <ol>
++   <li><p><span>Consider speculative loads</span> given <var>movedNode</var>'s <span>node
++   document</span>.</p></li>
++  </ol>
++
++  <p>The following <span data-x="concept-element-attributes-change-ext">attribute change
++  steps</span>, given <var>element</var>, <var>localName</var>, <var>oldValue</var>,
++  <var>value</var>, and <var>namespace</var>, are used for all <code>a</code> and <code>area</code>
++  elements:</p>
++
++  <ol>
++   <li><p>If <var>namespace</var> is not null, then return.</p></li>
+@@ -25274,2 +25360,16 @@ <h4>API for <code>a</code> and <code>area</code> elements</h4>
+-  <p class="note">This is only observable for <code data-x="blob protocol">blob:</code> URLs as
+-  <span data-x="url parser">parsing</span> them involves a <span>Blob URL Store</span> lookup.</p>
++   <li><p>If <var>oldValue</var> equals <var>value</var>, then return.</p></li>
++
++   <li>
++    <p>If <var>localName</var> is <code data-x="attr-hyperlink-href">href</code>, then <span
++    data-x="concept-hyperlink-url-set">set the url</span> given <var>element</var>.</p>
++
++    <p class="note">This is only observable for <code data-x="blob protocol">blob:</code> URLs as
++    <span data-x="url parser">parsing</span> them involves a <span>Blob URL Store</span> lookup.</p>
++   </li>
++
++   <!-- PRERENDERING: also monitor target="" for target-hint. -->
++   <li><p>If <var>localName</var> is <code data-x="attr-hyperlink-href">href</code>, <code
++   data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code>, or <code
++   data-x="attr-hyperlink-rel">rel</code>, then <span>consider speculative loads</span> given
++   <var>element</var>'s <span>node document</span>.</p></li>
++  </ol>
+@@ -25765,7 +25864,0 @@ <h4>Following hyperlinks</h4>
+-   <li><p>Let <var>referrerPolicy</var> be the current state of <var>subject</var>'s <code
+-   data-x="">referrerpolicy</code> content attribute.</p></li>
+-
+-   <li id="noreferrer-a-area-processing-model"><p>If <var>subject</var>'s <a href="#linkTypes">link
+-   types</a> includes the <code data-x="rel-noreferrer">noreferrer</code> keyword, then set
+-   <var>referrerPolicy</var> to "<code data-x="">no-referrer</code>".</p></li>
+-
+@@ -25775,3 +25868,4 @@ <h4>Following hyperlinks</h4>
+-    data-x="navigation-referrer-policy">referrerPolicy</i> set to <var>referrerPolicy</var>, <i
+-    data-x="navigation-user-involvement">userInvolvement</i> set to <var>userInvolvement</var>,
+-    and <i data-x="navigation-source-element">sourceElement</i> set to <var>subject</var>.</p>
++    data-x="navigation-referrer-policy">referrerPolicy</i> set to <var>subject</var>'s
++    <span>hyperlink referrer policy</span>, <i
++    data-x="navigation-user-involvement">userInvolvement</i> set to <var>userInvolvement</var>, and
++    <i data-x="navigation-source-element">sourceElement</i> set to <var>subject</var>.</p>
+@@ -25786,0 +25881,12 @@ <h4>Following hyperlinks</h4>
++  <p>The <dfn>hyperlink referrer policy</dfn> for an element <var>subject</var> is the value
++  returned by the following steps:</p>
++
++  <ol>
++   <li id="noreferrer-a-area-processing-model"><p>If <var>subject</var>'s <a href="#linkTypes">link
++   types</a> includes the <code data-x="rel-noreferrer">noreferrer</code> keyword, then return
++   "<code data-x="">no-referrer</code>".</p></li>
++
++   <li><p>Return the current state of <var>subject</var>'s <code
++   data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code> content attribute.</p></li>
++  </ol>
++
+@@ -63746,0 +63853,5 @@ <h4 id="the-script-element">The <dfn
++    <li><p>Setting the attribute to an <span>ASCII case-insensitive</span> match for "<code
++    data-x="">speculationrules</code>" means that the script defines a <span>speculation rule
++    set</span>, containing JSON that will be used to describe <a
++    href="#speculative-loading">speculative loads</a>.</p></li>
++
+@@ -63837,0 +63949,10 @@ <h4 id="the-script-element">The <dfn
++    <tr>
++     <th>Speculation rules</th>
++     <td class="no">&middot;</td>
++     <td class="no">&middot;</td>
++     <td class="no">&middot;</td>
++     <td class="no">&middot;</td>
++     <td class="no">&middot;</td>
++     <td class="no">&middot;</td>
++     <td class="no">&middot;</td>
++     <td class="no">&middot;</td>
+@@ -63870,0 +63992,4 @@ <h4 id="the-script-element">The <dfn
++  <p>The contents of inline <code>script</code> elements for <span data-x="speculation rule
++  set">speculation rule sets</span> must conform with the <span>speculation rule set authoring
++  requirements</span>.</p>
++
+@@ -64082,0 +64208,3 @@ <h4 id="the-script-element">The <dfn
++   <li><p>If <var>type</var> <span>is</span> "<code data-x="">speculationrules</code>", then return
++   true.</p></li>
++
+@@ -64303,4 +64431,4 @@ <h5 id="script-processing-model">Processing model</h5>
+-  either null, "<code data-x="">classic</code>", "<code data-x="">module</code>", or "<code
+-  data-x="">importmap</code>", initially null. It is determined when the element is <span
+-  data-x="prepare the script element">prepared</span>, based on the <code
+-  data-x="attr-script-type">type</code> attribute of the element at that time.</p>
++  either null, "<code data-x="">classic</code>", "<code data-x="">module</code>", "<code
++  data-x="">importmap</code>", or "<code data-x="">speculationrules</code>", initially null. It is
++  determined when the element is <span data-x="prepare the script element">prepared</span>, based on
++  the <code data-x="attr-script-type">type</code> attribute of the element at that time.</p>
+@@ -64311,2 +64439,3 @@ <h5 id="script-processing-model">Processing model</h5>
+-  data-x="concept-script">script</span>, or an <span>import map parse result</span>. It is
+-  initially "<code data-x="">uninitialized</code>".</p>
++  data-x="concept-script">script</span>, an <span>import map parse result</span>, or a
++  <span>speculation rules parse result</span>. It is initially "<code
++  data-x="">uninitialized</code>".</p>
+@@ -64316,3 +64445 @@ <h5 id="script-processing-model">Processing model</h5>
+-  <code>script</code> element <var>el</var> given a <span
+-  data-x="concept-script">script</span>, <span>import map parse result</span>, or null
+-  <var>result</var>:</p>
++  <code>script</code> element <var>el</var> given a <var>result</var>:</p>
+@@ -64398 +64525,2 @@ <h5 id="script-processing-model">Processing model</h5>
+-  <p>The <code>script</code> <span>children changed steps</span> are:</p>
++  <p>The <code>script</code> <span>HTML element removing steps</span> given <var>removedNode</var>
++  are:</p>
+@@ -64401,2 +64529,23 @@ <h5 id="script-processing-model">Processing model</h5>
+-   <li><p>Run the <code>script</code> <span>HTML element post-connection steps</span>, given the
+-   <code>script</code> element.</p></li>
++   <li>
++    <p>If <var>removedNode</var>'s <span data-x="concept-script-result">result</span> is a
++    <span>speculation rules parse result</span>, then:</p>
++
++    <ol>
++     <li><p><span>Unregister speculation rules</span> given <var>removedNode</var>'s <span>relevant
++     global object</span> and <var>removedNode</var>'s <span
++     data-x="concept-script-result">result</span>.</p></li>
++
++     <li><p>Set <var>removedNode</var>'s <span>already started</span> to false.</p></li>
++
++     <li><p>Set <var>removedNode</var>'s <span data-x="concept-script-result">result</span> to
++     null.</p></li>
++    </ol>
++   </li>
++  </ol>
++
++  <p>The <code>script</code> <span>children changed steps</span> given <var>changedNode</var>
++  are:</p>
++
++  <ol>
++   <li><p>Run the <code>script</code> <span>HTML element post-connection steps</span>, given
++   <var>changedNode</var>.</p></li>
+@@ -64406,2 +64555,3 @@ <h5 id="script-processing-model">Processing model</h5>
+-   <p>This has an interesting implication on the execution order of a <code>script</code> element
+-   and any newly-inserted child <code>script</code> elements. Consider the following snippet:</p>
++   <p>This has an interesting implication on the execution order
++   of a <code>script</code> element and any newly-inserted child <code>script</code> elements.
++   Consider the following snippet:</p>
+@@ -64458,0 +64609,15 @@ <h5 id="script-processing-model">Processing model</h5>
++  <p>To <dfn>update the speculation rules parse result</dfn> given a <code>script</code> element
++  <var>element</var>:</p>
++
++  <ol>
++   <li><p>Let <var>oldResult</var> be <var>element</var>'s <span
++   data-x="concept-script-result">result</span>.</p></li>
++
++   <li><p>Let <var>newResult</var> be the result of <span data-x="create a speculation rules parse
++   result">creating a speculation rules parse result</span> given <var>element</var>'s <span>child
++   text content</span> and <var>element</var>'s <span>node document</span>.</p></li>
++
++   <li><p><span>Update speculation rules</span> given <var>element</var>'s <span>relevant global
++   object</span>, <var>oldResult</var>, and <var>newResult</var>.</p></li>
++  </ol>
++
+@@ -64542,0 +64708,5 @@ <h5 id="script-processing-model">Processing model</h5>
++   <li><p>Otherwise, if <var>the script block's type string</var> is an <span>ASCII
++   case-insensitive</span> match for the string "<code data-x="">speculationrules</code>", then set
++   <var>el</var>'s <span data-x="concept-script-type">type</span> to "<code
++   data-x="">speculationrules</code>".</p></li>
++
+@@ -64581,0 +64752,4 @@ <h5 id="script-processing-model">Processing model</h5>
++   <li><p>Let <var>cspType</var> be "<code data-x="">script speculationrules</code>" if
++   <var>el</var>'s <span data-x="concept-script-type">type</span> is "<code
++   data-x="">speculationrules</code>"; otherwise, "<code data-x="">script</code>".</p></li>
++
+@@ -64585,2 +64759,2 @@ <h5 id="script-processing-model">Processing model</h5>
+-   data-x="">Blocked</code>" when given <var>el</var>, "<code data-x="">script</code>", and
+-   <var>source text</var>, then return. <ref>CSP</ref></p></li>
++   data-x="">Blocked</code>" when given <var>el</var>, <var>cspType</var>, and <var>source
++   text</var>, then return. <ref>CSP</ref></p></li>
+@@ -64673,4 +64847,4 @@ <h5 id="script-processing-model">Processing model</h5>
+-      data-x="">importmap</code>", then <span>queue an element task</span> on the <span>DOM
+-      manipulation task source</span> given <var>el</var> to <span data-x="concept-event-fire">fire
+-      an event</span> named <code data-x="event-error">error</code> at <var>el</var>, and
+-      return.</p>
++      data-x="">importmap</code>" or "<code data-x="">speculationrules</code>", then <span>queue an
++      element task</span> on the <span>DOM manipulation task source</span> given <var>el</var> to
++      <span data-x="concept-event-fire">fire an event</span> named <code
++      data-x="event-error">error</code> at <var>el</var>, and return.</p>
+@@ -64678,3 +64852,4 @@ <h5 id="script-processing-model">Processing model</h5>
+-      <p class="note">External import map scripts are not currently supported. See <a
+-      href="https://github.com/WICG/import-maps/issues/235">WICG/import-maps issue #235</a> for
+-      discussions on adding support.</p>
++      <p class="note">External import maps and speculation rules are not currently supported. See <a
++      href="https://github.com/WICG/import-maps/issues/235">WICG/import-maps issue #235</a> and <a
++      href="https://github.com/WICG/nav-speculation/issues/348">WICG/nav-speculation issue #348</a>
++      for discussions on adding support.</p>
+@@ -64830,0 +65006,11 @@ <h5 id="script-processing-model">Processing model</h5>
++
++       <dt>"<code data-x="">speculationrules</code>"</dt>
++       <dd>
++        <ol>
++         <li><p>Let <var>result</var> be the result of <span data-x="create a speculation rules
++         parse result">creating a speculation rules parse result</span> given <var>source text</var>
++         and <var>document</var>.</p></li>
++
++         <li><p><span>Mark as ready</span> <var>el</var> given <var>result</var>.</p></li>
++        </ol>
++       </dd>
+@@ -65077,0 +65264,9 @@ <h5 id="script-processing-model">Processing model</h5>
++
++     <dt>"<code data-x="">speculationrules</code>"</dt>
++     <dd>
++      <ol>
++       <li><p><span>Register speculation rules</span> given <var>el</var>'s <span>relevant global
++       object</span> and <var>el</var>'s <span
++       data-x="concept-script-result">result</span>.</p></li>
++      </ol>
++     </dd>
+@@ -107244,0 +107440,11 @@ <h4>Shared document creation infrastructure</h4>
++   <li>
++    <p>If <var>navigationParams</var>'s <span data-x="navigation-params-navigable">navigable</span>
++    is a <span>top-level traversable</span>, then <span>process the `<code>Speculation-Rules</code>`
++    header</span> given <var>document</var> and <var>navigationParams</var>'s <span
++    data-x="navigation-params-response">response</span>.</p>
++
++    <p class="note">This is conditional because <a
++    href="#step-consider-speculative-loads-top-level-only">speculative loads are only considered for
++    top-level traversables</a>, so it would be wasteful to fetch these rules otherwise.</p>
++   </li>
++
+@@ -108216,0 +108423,1984 @@ <h4>Aborting a document load</h4>
++  <h3 split-filename="speculative-loading">Speculative loading</h3>
++
++  <p>Speculative loading is the practice of performing navigation actions, such as prefetching,
++  ahead of navigation starting. This makes subsequent navigations faster.</p>
++
++  <p>Developers can initatiate speculative loads by using <span data-x="speculation rule
++  set">speculation rules</span>. User agents might also perform speculative loads in certain
++  <span>implementation-defined</span> scenarios, such as typing into the address bar.</p>
++
++  <h4>Speculation rules</h4>
++
++  <p><span data-x="speculation rule set">Speculation rules</span> are how developers instruct the
++  browser about speculative loading operations that the developer believes will be beneficial. They
++  are delivered as JSON documents, via either:</p>
++
++  <ul>
++   <li><p>inline <code>script</code> elements with their <code data-x="attr-script-type">type</code>
++   attribute set to "<code data-x="">speculationrules</code>"; or</p></li>
++
++   <li><p>resources fetched from a URL specified in the `<code>Speculation-Rules</code>` HTTP
++   response header.</p></li>
++  </ul>
++
++  <div class="example" id="example-speculation-rules-simple">
++   <p>The following JSON document is parsed into a <span>speculation rule set</span> specifying a
++   number of desired conditions for the user agent to <span>start a referrer-initiated navigational
++   prefetch</span>:</p>
++
++   <pre><code data-x="" class="json">{
++  "prefetch": [
++    {
++      "urls": ["/chapters/5"]
++    },
++    {
++      "eagerness": "moderate",
++      "where": {
++        "and": [
++          { "href_matches": "/*" },
++          { "not": { "selector_matches": ".no-prefetch" } }
++        ]
++      }
++    }
++  ]
++}</code></pre>
++  </div>
++
++  <p>A JSON document representing a <span>speculation rule set</span> must meet the following
++  <dfn>speculation rule set authoring requirements</dfn>:</p>
++
++  <ul>
++   <li><p>It must be valid JSON. <ref>JSON</ref></p></li>
++
++   <li>
++    <p>The JSON must represent a JSON object, with at most three keys "<code data-x="">tag</code>",
++    "<code data-x="">prefetch</code>" and "<code data-x="">prerender</code>".</p>
++
++    <p class="note">In this standard, "<code data-x="">prerender</code>" is optionally converted to
++    "<code data-x="">prefetch</code>" <a
++    href="#note-speculation-rules-parse-prerender-as-prefetch">at parse time</a>. Some
++    implementations might implement different behavior for prerender, as specified in
++    <cite>Speculation Rules</cite>. <ref>SPECULATIONRULES</ref></p>
++   </li>
++
++   <li><p>The value corresponding to the "<code data-x="">tag</code>" key, if present, must be a
++   <span>speculation rule tag</span>.</p></li>
++
++   <li><p>The values corresponding to the "<code data-x="">prefetch</code>" and "<code
++   data-x="">prerender</code>" keys, if present, must be arrays of <span data-x="valid speculation
++   rule">valid speculation rules</span>.</p></li>
++  </ul>
++
++  <p>A <dfn>valid speculation rule</dfn> is a JSON object that meets the following requirements:</p>
++
++  <ul>
++   <li>
++    <p>It must have at most the following keys: "<code data-x="">source</code>", "<code
++    data-x="">urls</code>", "<code data-x="">where</code>", "<code data-x="">relative_to</code>",
++    "<code data-x="">eagerness</code>",  "<code data-x="">referrer_policy</code>", "<code
++    data-x="">tag</code>", "<code data-x="">requires</code>", "<code
++    data-x="">expects_no_vary_search</code>", or "<code data-x="">target_hint</code>".</p>
++
++    <p class="note">In this standard, <a href="#note-speculation-rules-parse-target-hint">"<code
++    data-x="">target_hint</code>" is ignored</a>.</p>
++   </li>
++
++   <li><p>The value corresponding to the "<code data-x="">source</code>" key, if present, must be
++   either "<code data-x="">list</code>" or "<code data-x="">document</code>".</p></li>
++
++   <li><p>If the value corresponding to the "<code data-x="">source</code>" key is "<code
++   data-x="">list</code>", then the "<code data-x="">urls</code>" key must be present, and the
++   "<code data-x="">where</code>" key must be absent.</p></li>
++
++   <li><p>If the value corresponding to the "<code data-x="">source</code>" key is "<code
++   data-x="">document</code>", then the "<code data-x="">urls</code>" key must be absent.</p></li>
++
++   <li><p>The "<code data-x="">urls</code>" and "<code data-x="">where</code>" keys must not both be
++   present.</p></li>
++
++   <li><p>If the value corresponding to the "<code data-x="">source</code>" key is "<code
++   data-x="">document</code>" or the "<code data-x="">where</code>" key is present, then the "<code
++   data-x="">relative_to</code>" key must be absent.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">urls</code>" key, if present, must be an
++   array of <span data-x="valid URL string">valid URL strings</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">where</code>" key, if present, must be a
++   <span>valid document rule predicate</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">relative_to</code>" key, if present, must
++   be either "<code data-x="">ruleset</code>" or "<code data-x="">document</code>".</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">eagerness</code>" key, if present, must be
++   a <span>speculation rule eagerness</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">referrer_policy</code>" key, if present,
++   must be a <span>referrer policy</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">tag</code>" key, if present, must be a
++   <span>speculation rule tag</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">requires</code>" key, if present, must be
++   an array of <span data-x="speculation rule requirement">speculation rule
++   requirements</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">expects_no_vary_search</code>" key, if
++   present, must be a <span>string</span> that is <span data-x="parse a URL search
++   variance">parseable</span> as a `<code>No-Vary-Search</code>` header value.</p></li>
++  </ul>
++
++  <p>A <dfn>valid document rule predicate</dfn> is a JSON object that meets the following
++  requirements:</p>
++
++  <ul>
++   <li><p>It must contain exactly one of the keys "<code data-x="">and</code>", "<code
++   data-x="">or</code>", "<code data-x="">not</code>", "<code data-x="">href_matches</code>", or
++   "<code data-x="">selector_matches</code>".</p></li>
++
++   <li><p>It must not contain any keys apart from the above or "<code
++   data-x="">relative_to</code>".</p></li>
++
++   <li><p>If it contains the key "<code data-x="">relative_to</code>", then it must also contain the
++   key "<code data-x="">href_matches</code>".</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">relative_to</code>" key, if present, must
++   be either "<code data-x="">ruleset</code>" or "<code data-x="">document</code>".</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">and</code>" or "<code data-x="">or</code>"
++   keys, if present, must be arrays of <span data-x="valid document rule predicate">valid document
++   rule predicates</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">not</code>" key, if present, must be a
++   <span>valid document rule predicate</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">href_matches</code>" key, if present, must
++   be either a <span>valid URL pattern input</span> or an array of <span data-x="valid URL pattern
++   input">valid URL pattern inputs</span>.</p></li>
++
++   <li><p>The value corresponding to the "<code data-x="">selector_matches</code>" key, if present,
++   must be either a <span>string</span> matching <code>&lt;selector-list></code> or an array of
++   <span data-x="string">strings</span> that match <code>&lt;selector-list></code>.</p></li>
++  </ul>
++
++  <p>A <dfn>valid URL pattern input</dfn> is either:</p>
++
++  <ul>
++   <li><p>a <span>scalar value string</span> that can be successfully <span data-x="parse a URL
++   pattern constructor string">parsed</span> as a URL pattern constructor string, or;</p></li>
++
++   <li><p>a JSON object whose keys are drawn from the members of the <code>URLPatternInit</code>
++   dictionary and whose values are <span data-x="scalar value string">scalar value
++   strings</span>.</p></li>
++  </ul>
++
++  <h5 id="speculation-rules-data-model">Data model</h5>
++
++  <p>A <dfn>speculation rule set</dfn> is a <span>struct</span> with the following <span
++  data-x="struct item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sr-set-prefetch">prefetch rules</dfn>, a <span>list</span> of <span
++   data-x="speculation rule">speculation rules</span>, initially empty</p></li>
++  </ul>
++
++  <p class="note">In the future, other rules will be possible, e.g., prerender rules. See
++  <cite>Speculation Rules</cite> for such not-yet-accepted extensions.
++  <ref>SPECULATIONRULES</ref></p>
++
++  <p>A <dfn>speculation rule</dfn> is a <span>struct</span> with the following <span data-x="struct
++  item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sr-urls">URLs</dfn>, an <span data-x="set">ordered set</span> of <span
++   data-x="URL">URLs</span></p></li>
++
++   <li><p><dfn data-x="sr-predicate">predicate</dfn>, a <span>document rule predicate</span> or
++   null</p></li>
++
++   <li><p><dfn data-x="sr-eagerness">eagerness</dfn>, a <span>speculation rule
++   eagerness</span></p></li>
++
++   <li><p><dfn data-x="sr-referrer-policy">referrer policy</dfn>, a <span>referrer
++   policy</span></p></li>
++
++   <li><p><dfn data-x="sr-tags">tags</dfn>, an <span data-x="set">ordered set</span> of <span
++   data-x="speculation rule tag">speculation rule tags</span></p></li>
++
++   <li><p><dfn data-x="sr-requirements">requirements</dfn>, an <span data-x="set">ordered set</span>
++   of <span data-x="speculation rule requirement">speculation rule requirements</span></p></li>
++
++   <li><p><dfn data-x="sr-nvs-hint">No-Vary-Search hint</dfn>, a <span>URL search
++   variance</span></p></li>
++  </ul>
++
++  <hr>
++
++  <p>A <dfn>document rule predicate</dfn> is one of the following:</p>
++
++  <ul>
++   <li><p>a <span>document rule conjunction</span>;</p></li>
++
++   <li><p>a <span>document rule disjunction</span>;</p></li>
++
++   <li><p>a <span>document rule negation</span>;</p></li>
++
++   <li><p>a <span>document rule URL pattern predicate</span>; or</p></li>
++
++   <li><p>a <span>document rule selector predicate</span>.</p></li>
++  </ul>
++
++  <p>A <dfn>document rule conjunction</dfn> is a <span>struct</span> with the following <span
++  data-x="struct item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sr-dr-c-clauses">clauses</dfn>, a <span>list</span> of <span data-x="document
++   rule predicate">document rule predicates</span></p></li>
++  </ul>
++
++  <p>A <dfn>document rule disjunction</dfn> is a <span>struct</span> with the following <span
++  data-x="struct item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sr-dr-d-clauses">clauses</dfn>, a <span>list</span> of <span data-x="document
++   rule predicate">document rule predicates</span></p></li>
++  </ul>
++
++  <p>A <dfn>document rule negation</dfn> is a <span>struct</span> with the following <span
++  data-x="struct item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sr-dr-n-clause">clause</dfn>, a <span>document rule predicate</span></p></li>
++  </ul>
++
++  <p>A <dfn>document rule URL pattern predicate</dfn> is a <span>struct</span> with the following
++  <span data-x="struct item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sr-dr-urlpattern-patterns">patterns</dfn>, a <span>list</span> of <span
++   data-x="URL pattern">URL patterns</span></p></li>
++  </ul>
++
++  <p>A <dfn>document rule selector predicate</dfn> is a <span>struct</span> with the following <span
++  data-x="struct item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sr-dr-cssselector-selectors">selectors</dfn>, a <span>list</span> of <span
++   data-x="selector">selectors</span></p></li>
++  </ul>
++
++  <hr>
++
++  <p>A <dfn>speculation rule eagerness</dfn> is one of the following <span
++  data-x="string">strings</span>:</p>
++
++  <dl>
++   <dt>"<dfn><code data-x="sr-eagerness-immediate">immediate</code></dfn>"</dt>
++   <dd><p>The developer believes that performing the associated speculative loads is very likely to
++   be worthwhile, and they might also expect that load to require significant lead time to complete.
++   User agents should usually enact the speculative load candidate as soon as practical, subject
++   only to considerations such as user preferences, device conditions, and resource limits.</p></dd>
++
++   <dt>"<dfn><code data-x="sr-eagerness-eager">eager</code></dfn>"</dt>
++   <dd><p>User agents should enact the speculative load candidate on even a slight suggestion that
++   the user may navigate to this URL in the future. For instance, the user might have moved the
++   cursor toward a link or hovered it, even momentarily, or paused scrolling when the link is one of
++   the more prominent ones in the viewport. The author is seeking to capture as many navigations as
++   possible, as early as possible.</p></dd>
++
++   <dt>"<dfn><code data-x="sr-eagerness-moderate">moderate</code></dfn>"</dt>
++   <dd><p>User agents should enact the candidate if user behavior suggests the user may navigate to
++   this URL in the near future. For instance, the user might have scrolled a link into the viewport
++   and shown signs of being likely to click it, e.g., by moving the cursor over it for some time.
++   The developer is seeking a balance between "<code data-x="sr-eagerness-eager">eager</code>" and
++   "<code data-x="sr-eagerness-conservative">conservative</code>".</p></dd>
++
++   <dt>"<dfn><code data-x="sr-eagerness-conservative">conservative</code></dfn>"</dt>
++   <dd><p>User agents should enact the candidate only when the user is very likely to navigate to
++   this URL at any moment. For instance, the user might have begun to interact with a link. The
++   developer is seeking to capture some of the benefits of speculative loading with a fairly small
++   tradeoff of resources.</p></dd>
++  </dl>
++
++  <p>A <span>speculation rule eagerness</span> <var>A</var> is <dfn
++  data-x="sr-eagerness-less-eager">less eager</dfn> than another <span>speculation rule
++  eagerness</span> <var>B</var> if <var>A</var> follows <var>B</var> in the above list.</p>
++
++  <p>A <span>speculation rule eagerness</span> <var>A</var> is <dfn
++  data-x="sr-eagerness-at-least-as-eager">at least as eager</dfn> as another <span>speculation rule
++  eagerness</span> <var>B</var> if <var>A</var> is not <span data-x="sr-eagerness-less-eager">less
++  eager</span> than <var>B</var>.</p>
++
++  <hr>
++
++  <p>A <dfn>speculation rule tag</dfn> is either an <span>ASCII string</span> whose <span
++  data-x="code point">code points</span> are all in the range U+0020 to U+007E inclusive, or
++  null.</p>
++
++  <p class="note">This code point range restriction ensures the value can be sent in an HTTP header
++  with no escaping or modification.</p>
++
++  <hr>
++
++  <p>A <dfn>speculation rule requirement</dfn> is the string "<code
++  data-x="">anonymous-client-ip-when-cross-origin</code>".</p>
++
++  <p class="note">In the future, more possible requirements might be defined.</p>
++
++  <h5 id="speculation-rules-parsing">Parsing</h5>
++
++  <div class="note">
++   <p>Since speculative loading is a progressive enhancement, this standard is fairly conservative
++   in its parsing behavior. In particular, unknown keys or invalid values usually cause parsing
++   failure, since it is safer to do nothing than to possibly misinterpret a speculation rule.</p>
++
++   <p>That said, parsing failure for a single speculation rule still allows other speculation rules
++   to be processed. It is only in the case of top-level misconfiguration that the entire speculation
++   rule set is discarded.</p>
++  </div>
++
++  <p>To <dfn>parse a speculation rule set string</dfn> given a <span>string</span> <var>input</var>,
++  a <code>Document</code> <var>document</var>, and a <span>URL</span> <var>baseURL:</var></p>
++
++  <ol>
++   <li><p>Let <var>parsed</var> be the result of <span data-x="parse a JSON string to an Infra
++   value">parsing a JSON string to an Infra value</span> given <var>input</var>.</p></li>
++
++   <li><p>If <var>parsed</var> is not a <span data-x="ordered map">map</span>, then throw a
++   <code>TypeError</code> indicating that the top-level value needs to be a JSON object.</p>
++
++   <li><p>Let <var>result</var> be a new <span>speculation rule set</span>.</p></li>
++
++   <li><p>Let <var>tag</var> be null.</p></li>
++
++   <li>
++    <p>If <var>parsed</var>["<code data-x="">tag</code>"] <span data-x="map
++    exists">exists</span>:</p>
++
++    <ol>
++     <li><p>If <var>parsed</var>["<code data-x="">tag</code>"] is not a <span>speculation rule
++     tag</span>, then throw a <code>TypeError</code> indicating that the speculation rule tag is
++     invalid.</p>
++
++     <li><p>Set <var>tag</var> to <var>parsed</var>["<code data-x="">tag</code>"].</p></li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>typesToTreatAsPrefetch</var> be « "<code data-x="">prefetch</code>" ».</p></li>
++
++   <li>
++    <p>The user agent may <span data-x="list append">append</span> "<code
++    data-x="">prerender</code>" to <var>typesToTreatAsPrefetch</var>.</p>
++
++    <p class="note" id="note-speculation-rules-parse-prerender-as-prefetch">Since this specification
++    only includes prefetching, this allows user agents to treat requests for prerendering as
++    requests for prefetching. User agents which implement prerendering, per the <cite>Speculation
++    Rules</cite> specification, will instead interpret these as prerender requests.
++    <ref>SPECULATIONRULES</ref></p>
++   </li>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <var>type</var> of
++    <var>typesToTreatAsPrefetch</var>:</p>
++
++    <ol>
++     <li>
++      <p>If <var>parsed</var>[<var>type</var>] <span data-x="map exists">exists</span>:</p>
++
++      <ol>
++       <li>
++        <p>If <var>parsed</var>[<var>type</var>] is a <span>list</span>, then <span data-x="list
++        iterate">for each</span> <var>rule</var> of <var>parsed</var>[<var>type</var>]:</p>
++
++        <ol>
++         <li><p>Let <var>rule</var> be the result of <span data-x="parse a speculation rule">parsing
++         a speculation rule</span> given <var>rule</var>, <var>tag</var>, <var>document</var>, and
++         <var>baseURL</var>.</p></li>
++
++         <li><p>If <var>rule</var> is null, then <span>continue</span>.</p></li>
++
++         <li><p><span data-x="list append">Append</span> <var>rule</var> to <var>result</var>'s
++         <span data-x="sr-set-prefetch">prefetch rules</span>.</p></li>
++        </ol>
++       </li>
++
++       <li><p>Otherwise, the user agent may <span>report a warning to the console</span> indicating
++       that the rules list for <var>type</var> needs to be a JSON array.</p></li>
++      </ol>
++     </li>
++    </ol>
++   </li>
++
++   <li><p>Return <var>result</var>.</p></li>
++  </ol>
++
++  <p>To <dfn>parse a speculation rule</dfn> given a <span data-x="ordered map">map</span>
++  <var>input</var>, a <span>speculation rule tag</span> <var>rulesetLevelTag</var>, a
++  <code>Document</code> <var>document</var>, and a <span>URL</span> <var>baseURL</var>:</p>
++
++  <ol>
++   <li>
++    <p>If <var>input</var> is not a <span data-x="ordered map">map</span>:</p>
++
++    <ol>
++     <li><p>The user agent may <span>report a warning to the console</span> indicating that the rule
++     needs to be a JSON object.</p></li>
++
++     <li><p>Return null.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>input</var> has any <span data-x="map key">key</span> other than "<code
++    data-x="">source</code>", "<code data-x="">urls</code>", "<code data-x="">where</code>", "<code
++    data-x="">relative_to</code>", "<code data-x="">eagerness</code>",  "<code
++    data-x="">referrer_policy</code>", "<code data-x="">tag</code>", "<code
++    data-x="">requires</code>", "<code data-x="">expects_no_vary_search</code>", or "<code
++    data-x="">target_hint</code>":</p>
++
++    <ol>
++     <li><p>The user agent may <span>report a warning to the console</span> indicating that the rule
++     has unrecognized keys.</p></li>
++
++     <li><p>Return null.</p></li>
++    </ol>
++
++    <p class="note" id="note-speculation-rules-parse-target-hint">"<code
++    data-x="">target_hint</code>" has no impact on the processing model in this standard. However,
++    implementations of <cite>Speculation Rules</cite> can use it for prerendering rules, and so
++    requiring user agents to fail parsing such rules would be counterproductive.
++    <ref>SPECULATIONRULES</ref>.</p>
++   </li>
++
++   <li><p>Let <var>source</var> be null.</p></li>
++
++   <li><p>If <var>input</var>["<code data-x="">source</code>"] <span data-x="map
++   exists">exists</span>, then set <var>source</var> to <var>input</var>["<code
++   data-x="">source</code>"].</p></li>
++
++   <li><p>Otherwise, if <var>input</var>["<code data-x="">urls</code>"] <span data-x="map
++   exists">exists</span> and <var>input</var>["<code data-x="">where</code>"] does not <span
++   data-x="map exists">exist</span>, then set <var>source</var> to "<code
++   data-x="">list</code>".</p></li>
++
++   <li><p>Otherwise, if <var>input</var>["<code data-x="">where</code>"] <span data-x="map
++   exists">exists</span> and <var>input</var>["<code data-x="">urls</code>"] does not <span
++   data-x="map exists">exist</span>, then set <var>source</var> to "<code
++   data-x="">document</code>".</p></li>
++
++   <li>
++    <p>If <var>source</var> is neither "<code data-x="">list</code>" nor "<code
++    data-x="">document</code>":</p>
++
++    <ol>
++     <li><p>The user agent may <span>report a warning to the console</span> indicating that a source
++     could not be inferred or an invalid source was specified.</p></li>
++
++     <li><p>Return null.</p></li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>urls</var> be an empty <span>list</span>.</p></li>
++
++   <li><p>Let <var>predicate</var> be null.</p></li>
++
++   <li>
++    <p>If <var>source</var> is "<code data-x="">list</code>":</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var>["<code data-x="">where</code>"] <span data-x="map
++      exists">exists</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that there
++       were conflicting sources for this rule.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li>
++      <p>If <var>input</var>["<code data-x="">relative_to</code>"] <span data-x="map
++      exists">exists</span>:</p>
++
++      <ol>
++       <li>
++        <p>If <var>input</var>["<code data-x="">relative_to</code>"] is neither "<code
++        data-x="">ruleset</code>" nor "<code data-x="">document</code>":</p>
++
++        <ol>
++         <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++         supplied relative-to value was invalid.</p></li>
++
++         <li><p>Return null.</p></li>
++        </ol>
++       </li>
++
++       <li><p>If <var>input</var>["<code data-x="">relative_to</code>"] is "<code
++       data-x="">document</code>", then set <var>baseURL</var> to <var>document</var>'s
++       <span>document base URL</span>.</p></li>
++      </ol>
++     </li>
++
++     <li>
++      <p>If <var>input</var>["<code data-x="">urls</code>"] does not <span data-x="map
++      exists">exist</span> or is not a <span>list</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       supplied URL list was invalid.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>urlString</var> of <var>input</var>["<code
++      data-x="">urls</code>"]:</p>
++
++      <ol>
++       <li>
++        <p>If <var>urlString</var> is not a string:</p>
++
++        <ol>
++         <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++         supplied URL must be a string.</p></li>
++
++         <li><p>Return null.</p></li>
++        </ol>
++       </li>
++
++       <li><p>Let <var>parsedURL</var> be the result of <span data-x="URL parser">URL parsing</span>
++       <var>urlString</var> with <var>baseURL</var>.</p></li>
++
++       <li>
++        <p>If <var>parsedURL</var> is failure, or <var>parsedURL</var>'s <span
++        data-x="concept-url-scheme">scheme</span> is not an <span>HTTP(S) scheme</span>:</p>
++
++        <ol>
++         <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++         supplied URL string was unparseable.</p></li>
++
++         <li><p><span>Continue</span>.</p></li>
++        </ol>
++       </li>
++
++       <li><p><span data-x="list append">Append</span> <var>parsedURL</var> to
++       <var>urls</var>.</p></li>
++      </ol>
++     </li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>source</var> is "<code data-x="">document</code>":</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var>["<code data-x="">urls</code>"] or <var>input</var>["<code
++      data-x="">relative_to</code>"] <span data-x="map exists">exists</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that there
++       were conflicting sources for this rule.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li>
++      <p>If <var>input</var>["<code data-x="">where</code>"] does not <span data-x="map
++      exists">exist</span>, then set <var>predicate</var> to a <span>document rule
++      conjunction</span> whose <span data-x="sr-dr-c-clauses">clauses</span> is an empty
++      <span>list</span>.</p>
++
++      <p class="note">Such a predicate will match all links.</p>
++     </li>
++
++     <li><p>Otherwise, set <var>predicate</var> to the result of <span data-x="parse a document rule
++     predicate">parsing a document rule predicate</span> given <var>input</var>["<code
++     data-x="">where</code>"], <var>document</var>, and <var>baseURL</var>.</p></li>
++
++     <li><p>If <var>predicate</var> is null, then return null.</p></li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>eagerness</var> be "<code data-x="sr-eagerness-immediate">immediate</code>" if
++   <var>source</var> is "<code data-x="">list</code>"; otherwise, "<code
++   data-x="sr-eagerness-conservative">conservative</code>".</p></li>
++
++   <li>
++    <p>If <var>input</var>["<code data-x="">eagerness</code>"] <span data-x="map
++    exists">exists</span>:</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var>["<code data-x="">eagerness</code>"] is not a <span>speculation rule
++      eagerness</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       eagerness was invalid.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Set <var>eagerness</var> to <var>input</var>["<code
++     data-x="">eagerness</code>"].</p></li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>referrerPolicy</var> be the empty string.</p></li>
++
++   <li>
++    <p>If <var>input</var>["<code data-x="">referrer_policy</code>"] <span data-x="map
++    exists">exists</span>:</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var>["<code data-x="">referrer_policy</code>"] is not a <span>referrer
++      policy</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       referrer policy was invalid.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Set <var>referrerPolicy</var> to <var>input</var>["<code
++     data-x="">referrer_policy</code>"].</p></li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>tags</var> be an empty <span data-x="set">ordered set</span>.</p></li>
++
++   <li><p>If <var>rulesetLevelTag</var> is not null, then <span data-x="set append">append</span>
++   <var>rulesetLevelTag</var> to <var>tags</var>.</p></li>
++
++   <li>
++    <p>If <var>input</var>["<code data-x="">tag</code>"] <span data-x="map
++    exists">exists</span>:</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var>["<code data-x="">tag</code>"] is not a <span>speculation rule
++      tag</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       tag was invalid.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li><p><span data-x="set append">Append</span> <var>input</var>["<code data-x="">tag</code>"]
++     to <var>tags</var>.</p></li>
++    </ol>
++   </li>
++
++   <li><p>If <var>tags</var> <span data-x="list is empty">is empty</span>, then <span data-x="set
++   append">append</span> null to <var>tags</var>.</p></li>
++
++   <li><p><span>Assert</span>: <var>tags</var>'s <span data-x="list size">size</span> is either 1 or
++   2.</p></li>
++
++   <li><p>Let <var>requirements</var> be an empty <span data-x="set">ordered set</span>.</p></li>
++
++   <li>
++    <p>If <var>input</var>["<code data-x="">requires</code>"] <span data-x="map
++    exists">exists</span>:</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var>["<code data-x="">requires</code>"] is not a <span>list</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       requirements were not understood.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>requirement</var> of
++      <var>input</var>["<code data-x="">requires</code>"]:</p>
++
++      <ol>
++       <li>
++        <p>If <var>requirement</var> is not a <span>speculation rule requirement</span>:</p>
++
++        <ol>
++         <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++         requirement was not understood.</p></li>
++
++         <li><p>Return null.</p></li>
++        </ol>
++       </li>
++
++       <li><p><span data-x="set append">Append</span> <var>requirement</var> to
++       <var>requirements</var>.</p></li>
++      </ol>
++     </li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>noVarySearchHint</var> be the <span>default URL search variance</span>.</p></li>
++
++   <li>
++    <p>If <var>input</var>["<code data-x="">expects_no_vary_search</code>"] <span data-x="map
++    exists">exists</span>:</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var>["<code data-x="">expects_no_vary_search</code>"] is not a
++      <span>string</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       `<code>No-Vary-Search</code>` hint was invalid.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Set <var>noVarySearchHint</var> to the result of <span data-x="parse a URL search
++     variance">parsing a URL search variance</span> given <var>input</var>["<code
++     data-x="">expects_no_vary_search</code>"].</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>Return a <span>speculation rule</span> with:</p>
++
++    <dl class="props">
++     <dt><span data-x="sr-urls">URLs</span></dt>
++     <dd><var>urls</var></dd>
++
++     <dt><span data-x="sr-predicate">predicate</span></dt>
++     <dd><var>predicate</var></dd>
++
++     <dt><span data-x="sr-eagerness">eagerness</span></dt>
++     <dd><var>eagerness</var></dd>
++
++     <dt><span data-x="sr-referrer-policy">referrer policy</span></dt>
++     <dd><var>referrerPolicy</var></dd>
++
++     <dt><span data-x="sr-tags">tags</span></dt>
++     <dd><var>tags</var></dd>
++
++     <dt><span data-x="sr-requirements">requirements</span></dt>
++     <dd><var>requirements</var></dd>
++
++     <dt><span data-x="sr-nvs-hint">No-Vary-Search hint</span></dt>
++     <dd><var>noVarySearchHint</var></dd>
++    </dl>
++   </li>
++  </ol>
++
++  <p>To <dfn>parse a document rule predicate</dfn> given a value <var>input</var>, a
++  <code>Document</code> <var>document</var>, and a <span>URL</span> <var>baseURL</var>:</p>
++
++  <ol>
++   <li>
++    <p>If <var>input</var> is not a <span data-x="ordered map">map</span>:</p>
++
++    <ol>
++     <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++     document rule predicate was invalid.</p></li>
++
++     <li><p>Return null.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>input</var> does not <span data-x="map exists">contain</span> exactly one of "<code
++    data-x="">and</code>", "<code data-x="">or</code>", "<code data-x="">not</code>", "<code
++    data-x="">href_matches</code>", or "<code data-x="">selector_matches</code>":</p>
++
++    <ol>
++     <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++     document rule predicate was empty or ambiguous.</p></li>
++
++     <li><p>Return null.</p></li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>predicateType</var> be the single key found in the previous step.</p></li>
++
++   <li>
++    <p>If <var>predicateType</var> is "<code data-x="">and</code>" or "<code
++    data-x="">or</code>":</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var> has any <span data-x="map key">key</span> other than
++      <var>predicateType</var>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       document rule predicate had unexpected extra options.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li>
++      <p>If <var>input</var>[<var>predicateType</var>] is not a <span>list</span>:</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       document rule predicate had an invalid clause list.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Let <var>clauses</var> be an empty <span>list</span>.</p></li>
++
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>rawClause</var> of
++      <var>input</var>[<var>predicateType</var>]:</p>
++
++      <ol>
++       <li><p>Let <var>clause</var> be the result of <span data-x="parse a document rule
++       predicate">parsing a document rule predicate</span> given <var>rawClause</var>,
++       <var>document</var>, and <var>baseURL</var>.</p></li>
++
++       <li><p>If <var>clause</var> is null, then return null.</p></li>
++
++       <li><p><span data-x="list append">Append</span> <var>clause</var> to
++       <var>clauses</var>.</p></li>
++      </ol>
++     </li>
++
++     <li><p>If <var>predicateType</var> is "<code data-x="">and</code>", then return a
++     <span>document rule conjunction</span> whose <span data-x="sr-dr-c-clauses">clauses</span> is
++     <var>clauses</var>.</p></li>
++
++     <li><p>Return a <span>document rule disjunction</span> whose <span
++     data-x="sr-dr-d-clauses">clauses</span> is <var>clauses</var>.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>predicateType</var> is "<code data-x="">not</code>":</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var> has any <span data-x="map key">key</span> other than "<code
++      data-x="">not</code>":</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       document rule predicate had unexpected extra options.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Let <var>clause</var> be the result of <span data-x="parse a document rule
++     predicate">parsing a document rule predicate</span> given
++     <var>input</var>[<var>predicateType</var>], <var>document</var>, and
++     <var>baseURL</var>.</p></li>
++
++     <li><p>If <var>clause</var> is null, then return null.</p></li>
++
++     <li><p>Return a <span>document rule negation</span> whose <span
++     data-x="sr-dr-n-clause">clause</span> is <var>clause</var>.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>predicateType</var> is "<code data-x="">href_matches</code>":</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var> has any <span data-x="map key">key</span> other than "<code
++      data-x="">href_matches</code>" or "<code data-x="">relative_to</code>":</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       document rule predicate had unexpected extra options.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li>
++      <p>If <var>input</var>["<code data-x="">relative_to</code>"] <span data-x="map
++      exists">exists</span>:</p>
++
++      <ol>
++       <li>
++        <p>If <var>input</var>["<code data-x="">relative_to</code>"] is neither "<code
++        data-x="">ruleset</code>" nor "<code data-x="">document</code>":</p>
++
++        <ol>
++         <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++         supplied relative-to value was invalid.</p></li>
++
++         <li><p>Return null.</p></li>
++        </ol>
++       </li>
++
++       <li><p>If <var>input</var>["<code data-x="">relative_to</code>"] is "<code
++       data-x="">document</code>", then set <var>baseURL</var> to <var>document</var>'s
++       <span>document base URL</span>.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Let <var>rawPatterns</var> be <var>input</var>["<code
++     data-x="">href_matches</code>"].</p></li>
++
++     <li><p>If <var>rawPatterns</var> is not a <span>list</span>, then set <var>rawPatterns</var> to
++     « <var>rawPatterns</var> ».</p></li>
++
++     <li><p>Let <var>patterns</var> be an empty <span>list</span>.</p></li>
++
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>rawPattern</var> of
++      <var>rawPatterns</var>:</p>
++
++      <ol>
++       <li><p>Let <var>pattern</var> be the result of <span data-x="build a URL pattern from an
++       Infra value">building a URL pattern from an Infra value</span> given <var>rawPattern</var>
++       and <var>baseURL</var>. If this step throws and exception, catch the exception and set
++       <var>pattern</var> to null.</p></li>
++
++       <li>
++        <p>If <var>pattern</var> is null:</p>
++
++        <ol>
++         <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++         supplied URL pattern was invalid.</p></li>
++
++         <li><p>Return null.</p></li>
++        </ol>
++       </li>
++
++       <li><p><span data-x="list append">Append</span> <var>pattern</var> to
++       <var>patterns</var>.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Return a <span>document rule URL pattern predicate</span> whose <span
++     data-x="sr-dr-urlpattern-patterns">patterns</span> is <var>patterns</var>.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>predicateType</var> is "<code data-x="">selector_matches</code>":</p>
++
++    <ol>
++     <li>
++      <p>If <var>input</var> has any <span data-x="map key">key</span> other than "<code
++      data-x="">selector_matches</code>":</p>
++
++      <ol>
++       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++       document rule predicate had unexpected extra options.</p></li>
++
++       <li><p>Return null.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Let <var>rawSelectors</var> be <var>input</var>["<code
++     data-x="">selector_matches</code>"].</p></li>
++
++     <li><p>If <var>rawSelectors</var> is not a <span>list</span>, then set <var>rawSelectors</var>
++     to « <var>rawSelectors</var> ».</p></li>
++
++     <li><p>Let <var>selectors</var> be an empty <span>list</span>.</p></li>
++
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>rawSelector</var> of
++      <var>rawSelectors</var>:</p>
++
++      <ol>
++       <li><p>Let <var>parsedSelectorList</var> be failure.</p></li>
++
++       <li><p>If <var>rawSelector</var> is a string, then set <var>parsedSelectorList</var> to the
++       result of <span data-x="parse a selector">parsing a selector</span> given
++       <var>rawSelector</var>.</p></li>
++
++       <li>
++        <p>If <var>parsedSelectorList</var> is failure:</p>
++
++        <ol>
++         <li><p>The user agent may <span>report a warning to the console</span> indicating that the
++         supplied selector list was invalid.</p></li>
++
++         <li><p>Return null.</p></li>
++        </ol>
++       </li>
++
++       <li><p><span data-x="list iterate">For each</span> <var>selector</var> of
++       <var>parsedSelectorList</var>, <span data-x="list append">append</span> <var>selector</var>
++       to <var>selectors</var>.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Return a <span>document rule selector predicate</span> whose <span
++     data-x="sr-dr-cssselector-selectors">selectors</span> is <var>selectors</var>.</p></li>
++    </ol>
++   </li>
++
++   <li><p><span>Assert</span>: this step is never reached, as one of the previous branches was
++   taken.</p></li>
++  </ol>
++
++
++  <h5 id="speculation-rules-processing-model">Processing model</h5>
++
++  <p>A <dfn>speculative load candidate</dfn> is a <span>struct</span> with the following <span
++  data-x="struct item">items</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sl-candidate-url">URL</dfn>, a <span>URL</span></p></li>
++
++   <li><p><dfn data-x="sl-candidate-nvs-hint">No-Vary-Search hint</dfn>, a <span>URL search
++   variance</span></p></li>
++
++   <li><p><dfn data-x="sl-candidate-eagerness">eagerness</dfn>, a <span>speculation rule
++   eagerness</span></p></li>
++
++   <li><p><dfn data-x="sl-candidate-referrer-policy">referrer policy</dfn>, a <span>referrer
++   policy</span></p></li>
++
++   <li><P><dfn data-x="sl-candidate-tags">tags</dfn>, an <span data-x="set">ordered set</span> of
++   <span data-x="speculation rule tag">speculation rule tags</span></p></li>
++  </ul>
++
++  <p>A <dfn>prefetch candidate</dfn> is a <span>speculative load candidate</span> with the following
++  additional <span data-x="struct item">item</span>:</p>
++
++  <ul>
++   <li><p><dfn data-x="sl-candidate-anonymization-policy">anonymization policy</dfn>, a
++   <span>prefetch IP anonymization policy</span></p></li>
++  </ul>
++
++  <p>A <dfn>prefetch IP anonymization policy</dfn> is either null or a <span>cross-origin prefetch
++  IP anonymization policy</span>.</p>
++
++  <p>A <dfn>cross-origin prefetch IP anonymization policy</dfn> is a <span>struct</span> whose
++  single <span data-x="struct item">item</span> is its <dfn data-x="copiap-origin">origin</dfn>, an
++  <span>origin</span>.</p>
++
++  <hr>
++
++  <p>A <span>speculative load candidate</span> <var>candidateA</var> is <dfn
++  data-x="sl-candidate-redundant-with">redundant with</dfn> another <span>speculative load
++  candidate</span> <var>candidateB</var> if the following steps return true:</p>
++
++  <ol>
++   <li><p>If <var>candidateA</var>'s <span data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span>
++   is not equal to <var>candidateB</var>'s <span data-x="sl-candidate-nvs-hint">No-Vary-Search
++   hint</span>, then return false.</p></li>
++
++   <li><p>If <var>candidateA</var>'s <span data-x="sl-candidate-url">URL</span> is not
++   <span>equivalent modulo search variance</span> to <var>candidateB</var>'s <span
++   data-x="sl-candidate-url">URL</span> given <var>candidateA</var>'s <span
++   data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span>, then return false.</p></li>
++
++   <li><p>Return true.</p></li>
++  </ol>
++
++  <div class="note" id="note-sl-candidate-redundant-with-nvs-strictness">
++   <p>The requirement that the <span data-x="sl-candidate-nvs-hint">No-Vary-Search hints</span> be
++   equivalent is somewhat strict. It means that some cases which could theoretically be treated as
++   matching, are not treated as such. Thus, redundant speculative loads could happen.</p>
++
++   <p>However, allowing more lenient matching makes the check no longer an equivalence relation, and
++   producing such matches would require an implementation strategy that does a full comparison,
++   instead of a simpler one using normalized URL keys. This is in line with the best practices for
++   server operators, and attendant HTTP cache implementation notes, in <a
++   href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#section-6"><cite>No
++   Vary Search</cite> §&nbsp;6 Comparing</a>.</p>
++
++   <p>In practice, we do not expect this to cause redundant speculative loads, since server
++   operators and the corresponding speculation rules-writing web developers will follow best
++   practices and use static `<code>No-Vary-Search</code>` header values/speculation rule hints.</p>
++  </div>
++
++  <div class="example" id="example-sl-candidate-reundant-with-nvs-strictness">
++   <p>Consider three <span data-x="speculative load candidate">speculative load
++   candidates</span>:</p>
++
++   <ol>
++    <li><p><var>A</var> has a <span data-x="sl-candidate-url">URL</span> of <code
++    data-x="">https://example.com?a=1&b=1</code> and a <span
++    data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span> parsed from <code
++    data-x="">params=("a")</code>.</p></li>
++
++    <li><p><var>B</var> has a <span data-x="sl-candidate-url">URL</span> of <code
++    data-x="">https://example.com?a=2&b=1</code> and a <span
++    data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span> parsed from <code
++    data-x="">params=("b")</code>.</p></li>
++
++    <li><p><var>C</var> has a <span data-x="sl-candidate-url">URL</span> of <code
++    data-x="">https://example.com?a=2&b=2</code> and a <span
++    data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span> parsed from <code
++    data-x="">params=("a")</code>.</p></li>
++   </ol>
++
++   <p>With the current definition of <span data-x="sl-candidate-redundant-with">redundant
++   with</span>, none of these candidates are redundant with each other. A <span>speculation rule
++   set</span> which contained all three could cause three separate speculative loads.</p>
++
++   <p>A definition which did not require equivalent <span
++   data-x="sl-candidate-nvs-hint">No-Vary-Search hints</span> could consider <var>A</var> and
++   <var>B</var> to match (using <var>A</var>'s <span data-x="sl-candidate-nvs-hint">No-Vary-Search
++   hint</span>), and <var>B</var> and <var>C</var> to match (using <var>B</var>'s <span
++   data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span>). But it could not consider
++   <var>A</var> and <var>C</var> to match, so it would not be transitive, and thus not an
++   equivalence relation.</p>
++  </div>
++
++  <hr>
++
++  <p>Every <code>Document</code> has <dfn data-x="document-sr-sets">speculation rule sets</dfn>, a
++  <span>list</span> of <span data-x="speculation rule set">speculation rule sets</span>, initially
++  empty.</p>
++
++  <p>Every <code>Document</code> has a <dfn>consider speculative loads microtask queued</dfn>, a
++  boolean, initially false.</p>
++
++  <p>To <dfn>consider speculative loads</dfn> for a <code>Document</code> <var>document</var>:</p>
++
++  <ol>
++   <li id="step-consider-speculative-loads-top-level-only">
++    <p>If <var>document</var>'s <span>node navigable</span> is not a <span>top-level
++    traversable</span>, then return.</p>
++
++    <p class="note">Supporting speculative loads into <span data-x="child navigable">child
++    navigables</span> has some complexities and is not currently defined. It might be possible to
++    define it in the future.</p>
++   </li>
++
++   <li><p>If <var>document</var>'s <span>consider speculative loads microtask queued</span> is true,
++   then return.</p></li>
++
++   <li><p>Set <var>document</var>'s <span>consider speculative loads microtask queued</span> to
++   true.</p></li>
++
++   <li>
++    <p><span>Queue a microtask</span> given <var>document</var> to run the following steps:</p>
++
++    <ol>
++     <li><p>Set <var>document</var>'s <span>consider speculative loads microtask queued</span> to
++     false.</p></li>
++
++     <li><p>Run the <span>inner consider speculative loads steps</span> for
++     <var>document</var>.</p></li>
++    </ol>
++   </li>
++  </ol>
++
++  <p>In addition to the call sites explicitly given in this standard:</p>
++
++  <ul>
++   <li><p>When style recalculation would cause selector matching results to change, the user agent
++   must <span>consider speculative loads</span> for the relevant <code>Document</code>.</p></li>
++
++   <li>
++    <p>When the user indicates interest in <span data-x="hyperlink">hyperlinks</span>, in one of the
++    <span>implementation-defined</span> ways that the user agent uses to implement the
++    <span>speculation rule eagerness</span> heuristics, the user agent may <span>consider
++    speculative loads</span> for the hyperlink's <span>node document</span>.</p>
++
++    <p class="example">For example, a user agent which implements "<code
++    data-x="sr-eagerness-conservative">conservative</code>" eagerness by watching for <code
++    data-x="event-pointerdown">pointerdown</code> events would want to <span>consider speculative
++    loads</span> as part of reacting to such events.</p>
++   </li>
++  </ul>
++
++  <div class="note" id="note-consider-speculative-loads-stateless">
++   <p>In this standard, every call to
++   <span>consider speculative loads</span> is given just a <code>Document</code>, and the algorithm
++   re-computes all possible candidates in a stateless way. A real implementation would likely cache
++   previous computations, and pass along information from the call site to make updates more
++   efficient. For example, if an <code>a</code> element's <code
++   data-x="attr-hyperlink-href">href</code> attribute is changed, that specific element could be
++   passed along in order to update only the related <span>speculative load candidate</span>.</p>
++
++   <p>Note that because of how <span>consider speculative loads</span> queues a microtask, by the
++   time the <span>inner consider speculative loads steps</span> are run, multiple updates (or <a
++   href="#step-prefetch-record-cancel-and-discard">cancelations</a>) might be processed
++   together.</p>
++  </div>
++
++  <p>The <dfn>inner consider speculative loads steps</dfn> for a <code>Document</code>
++  <var>document</var> are:</p>
++
++  <ol>
++   <li><p>If <var>document</var> is not <span>fully active</span>, then return.</p></li>
++
++   <!-- PRERENDERING: skip speculative loads in prerendering navigables. -->
++
++   <li><p>Let <var>prefetchCandidates</var> be an empty <span>list</span>.</p></li>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <var>ruleSet</var> of <var>document</var>'s <span
++    data-x="document-sr-sets">speculation rule sets</span>:</p>
++
++    <ol>
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>rule</var> of <var>ruleSet</var>'s <span
++      data-x="sr-set-prefetch">prefetch rules</span>:</p>
++
++      <ol>
++       <li><p>Let <var>anonymizationPolicy</var> be null.</p></li>
++
++       <li><p>If <var>rule</var>'s <span data-x="sr-requirements">requirements</span> <span
++       data-x="list contains">contains</span> "<code
++       data-x="">anonymous-client-ip-when-cross-origin</code>", then set
++       <var>anonymizationPolicy</var> to a <span>cross-origin prefetch IP anonymization
++       policy</span> whose <span data-x="copiap-origin">origin</span> is <var>document</var>'s <span
++       data-x="concept-document-origin">origin</span>.</p></li>
++
++       <li>
++        <p><span data-x="list iterate">For each</span> <var>url</var> of <var>rule</var>'s <span
++        data-x="sr-urls">URLs</span>:</p>
++
++        <ol>
++         <li><p>Let <var>referrerPolicy</var> be the result of <span data-x="compute a speculative
++         load referrer policy">computing a speculative load referrer policy</span> given
++         <var>rule</var> and null.</p></li>
++
++         <li>
++          <p><span data-x="list append">Append</span> a new <span>prefetch candidate</span> with</p>
++
++          <dl class="props">
++           <dt><span data-x="sl-candidate-url">URL</span></dt>
++           <dd><var>url</var></dd>
++
++           <dt><span data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span></dt>
++           <dd><var>rule</var>'s <span data-x="sr-nvs-hint">No-Vary-Search hint</span></dd>
++
++           <dt><span data-x="sl-candidate-eagerness">eagerness</span></dt>
++           <dd><var>rule</var>'s <span data-x="sr-eagerness">eagerness</span></dd>
++
++           <dt><span data-x="sl-candidate-referrer-policy">referrer policy</span></dt>
++           <dd><var>referrerPolicy</var></dd>
++
++           <dt><span data-x="sl-candidate-tags">tags</span></dt>
++           <dd><var>rule</var>'s <span data-x="sr-tags">tags</span></dd>
++
++           <dt><span data-x="sl-candidate-anonymization-policy">anonymization policy</span></dt>
++           <dd><var>anonymizationPolicy</var></dd>
++          </dl>
++
++          <p>to <var>prefetchCandidates</var>.</p>
++         </li>
++        </ol>
++       </li>
++
++       <li>
++        <p>If <Var>rule</var>'s <span data-x="sr-predicate">predicate</span> is not null:</p>
++
++        <ol>
++         <li><p>Let <var>links</var> be the result of <span data-x="find matching links">finding
++         matching links</span> given <var>document</var> and <var>rule</var>'s <span
++         data-x="sr-predicate">predicate</span>.</p></li>
++
++         <li>
++          <p><span data-x="list iterate">For each</span> <var>link</var> of <var>links</var>:</p>
++
++          <ol>
++           <li><p>Let <var>referrerPolicy</var> be the result of <span data-x="compute a speculative
++           load referrer policy">computing a speculative load referrer policy</span> given
++           <var>rule</var> and <var>link</var>.</p></li>
++
++           <li>
++            <p><span data-x="list append">Append</span> a new <span>prefetch candidate</span>
++            with</p>
++
++            <dl class="props">
++             <dt><span data-x="sl-candidate-url">URL</span></dt>
++             <dd><var>link</var>'s <span data-x="concept-hyperlink-url">url</span></dd>
++
++             <dt><span data-x="sl-candidate-nvs-hint">No-Vary-Search hint</span></dt>
++             <dd><var>rule</var>'s <span data-x="sr-nvs-hint">No-Vary-Search hint</span></dd>
++
++             <dt><span data-x="sl-candidate-eagerness">eagerness</span></dt>
++             <dd><var>rule</var>'s <span data-x="sr-eagerness">eagerness</span></dd>
++
++             <dt><span data-x="sl-candidate-referrer-policy">referrer policy</span></dt>
++             <dd><var>referrerPolicy</var></dd>
++
++             <dt><span data-x="sl-candidate-tags">tags</span></dt>
++             <dd><var>rule</var>'s <span data-x="sr-tags">tags</span></dd>
++
++             <dt><span data-x="sl-candidate-anonymization-policy">anonymization policy</span></dt>
++             <dd><var>anonymizationPolicy</var></dd>
++            </dl>
++
++            <p>to <var>prefetchCandidates</var>.</p>
++           </li>
++          </ol>
++         </li>
++        </ol>
++       </li>
++      </ol>
++     </li>
++    </ol>
++   </li>
++
++   <li id="step-prefetch-record-cancel-and-discard">
++    <p><span data-x="list iterate">For each</span> <var>prefetchRecord</var> of
++    <var>document</var>'s <span data-x="document-prefetch-records">prefetch records</span>:</p>
++
++    <ol>
++     <li><p>If <var>prefetchRecord</var>'s <span data-x="prefetch-record-source">source</span> is
++     not "<code data-x="">speculation rules</code>", then <span>continue</span>.</p></li>
++
++     <li><p><span>Assert</span>: <var>prefetchRecord</var>'s <span
++     data-x="prefetch-record-state">state</span> is not "<code data-x="">canceled</code>".</p></li>
++
++     <li><p>If <var>prefetchRecord</var> is not <span>still being speculated</span> given
++     <var>prefetchCandidates</var>, then <span data-x="prefetch-record-cancel-and-discard">cancel
++     and discard</span> <var>prefetchRecord</var> given <var>document</var>.</p></li>
++    </ol>
++   </li>
++
++   <li><p>Let <var>prefetchCandidateGroups</var> be an empty <span>list</span>.</p></li>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <var>candidate</var> of
++    <var>prefetchCandidates</var>:</p>
++
++    <ol>
++     <li><p>Let <var>group</var> be « <var>candidate</var> ».</p></li>
++
++     <li><p><span data-x="list extend">Extend</span> <var>group</var> with all <span data-x="list
++     item">items</span> in <var>prefetchCandidates</var>, apart from <var>candidate</var> itself,
++     which are <span data-x="sl-candidate-redundant-with">redundant with</span> <var>candidate</var>
++     and whose <span data-x="sl-candidate-eagerness">eagerness</span> is <span
++     data-x="sr-eagerness-at-least-as-eager">at least as eager</span> as <var>candidate</var>'s
++     <span data-x="sl-candidate-eagerness">eagerness</span>.</p></li>
++
++     <li><p>If <var>prefetchCandidateGroups</var> <span data-x="list contains">contains</span>
++     another group whose <span data-x="list item">items</span> are the same as <var>group</var>,
++     ignoring order, then <span>continue</span>.</p></li>
++
++     <li><p><span data-x="list append">Append</span> <var>group</var> to
++     <var>prefetchCandidateGroups</var>.</p></li>
++    </ol>
++
++    <div class="example" id="example-redundant-speculation-rules">
++     <p>The following speculation rules generate two <span
++     data-x="sl-candidate-redundant-with">redundant</span> <span data-x="prefetch
++     candidate">prefetch candidates</span>:</p>
++
++     <pre><code class="json" data-x="">{
++  "prefetch": [
++    {
++      "tag": "a",
++      "urls": ["next.html"]
++    },
++    {
++      "tag": "b",
++      "urls": ["next.html"],
++      "referrer_policy": "no-referrer"
++    }
++  ]
++}</code></pre>
++
++     <p>This step will create a single group containing them both, in the given order. (The second
++     pass through will not create a group, since its contents would be the same as the first group,
++     just in a different order.) This means that if the user agent chooses to execute the "may" step
++     below to enact the group, it will enact the first candidate, and ignore the second. Thus, the
++     request will be made with the <span>default referrer policy</span>, instead of using "<code
++     data-x="referrer-policy-no-referrer">no-referrer</code>".</p>
++
++     <p>However, the <span>collect tags from speculative load candidates</span> algorithm will
++     collect tags from both candidates in the group, so the `<code>Sec-Speculation-Tags</code>`
++     header will be set to <code data-x="">"a", "b"</code>. This indicates to server operators that
++     either rule could have caused the speculative load.</p>
++    </div>
++   </li>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <var>group</var> of
++    <var>prefetchCandidateGroups</var>:</p>
++
++    <ol>
++     <li>
++      <p>The user agent may run the following steps:</p>
++
++      <ol>
++       <li><p>Let <var>prefetchCandidate</var> be <var>group</var>[0].</p></li>
++
++       <li><p>Let <var>tagsToSend</var> be the result of <span data-x="collect tags from speculative
++       load candidates">collecting tags from speculative load candidates</span> given
++       <var>group</var>.</p></li>
++
++       <li>
++        <p>Let <var>prefetchRecord</var> be a new <span>prefetch record</span> with</p>
++
++        <dl class="props">
++         <dt><span data-x="prefetch-record-source">source</span></dt>
++         <dd>"<code data-x="">speculation rules</code>"</dd>
++
++         <dt><span data-x="prefetch-record-url">URL</span></dt>
++         <dd><var>prefetchCandidate</var>'s <span data-x="sl-candidate-url">URL</span></dd>
++
++         <dt><span data-x="prefetch-record-nvs-hint">No-Vary-Search hint</span></dt>
++         <dd><var>prefetchCandidate</var>'s <span data-x="sl-candidate-nvs-hint">No-Vary-Search
++         hint</span></dd>
++
++         <dt><span data-x="prefetch-record-referrer-policy">referrer policy</span></dt>
++         <dd><var>prefetchCandidate</var>'s <span data-x="sl-candidate-referrer-policy">referrer
++         policy</span></dd>
++
++         <dt><span data-x="prefetch-record-anonymization-policy">anonymization policy</span></dt>
++         <dd><var>prefetchCandidate</var>'s <span
++         data-x="sl-candidate-anonymization-policy">anonymization policy</span></dd>
++
++         <dt><span data-x="prefetch-record-tags">tags</span> <dd><var>tagsToSend</var></dd>
++        </dl>
++       </li>
++
++       <li><p><span>Start a referrer-initiated navigational prefetch</span> given
++       <var>prefetchRecord</var> and <var>document</var>.</p></li>
++      </ol>
++
++      <p>When deciding whether to execute this "may" step, user agents should consider
++      <var>prefetchCandidate</var>'s <span data-x="sl-candidate-eagerness">eagerness</span>, in
++      accordance to the current behavior of the user and the definitions of <span>speculation rule
++      eagerness</span>.</p>
++
++      <p><var>prefetchCandidate</var>'s <span data-x="sl-candidate-nvs-hint">No-Vary-Search
++      hint</span> can also be useful in implementing the heuristics defined for the
++      <span>speculation rule eagerness</span> values. For example, a user hovering of a link whose
++      <span data-x="concept-hyperlink-url">URL</span> is <span>equivalent modulo search
++      variance</span> to <var>prefetchCandidate</var>'s <span data-x="sl-candidate-url">URL</span>
++      given <var>prefetchCandidate</var>'s <span data-x="sl-candidate-nvs-hint">No-Vary-Search
++      hint</span> could indicate to the user agent that performing this step would be useful.</p>
++
++      <p>When deciding whether to execute this "may" step, user agents should prioritize user
++      preferences (express or implied, such as data-saver or battery-saver modes) over the eagerness
++      supplied by the web developer.</p>
++     </li>
++    </ol>
++   </li>
++  </ol>
++
++  <p>To <dfn>compute a speculative load referrer policy</dfn> given a <span>speculation rule</span>
++  <var>rule</var> and an <code>a</code> element, <code>area</code> element, or null
++  <var>link</var>:</p>
++
++  <ol>
++   <li><p>If <var>rule</var>'s <span data-x="sr-referrer-policy">referrer policy</span> is not the
++   empty string, then return <var>rule</var>'s <span data-x="sr-referrer-policy">referrer
++   policy</span>.</p></li>
++
++   <li><p>If <var>link</var> is null, then return the empty string.</p></li>
++
++   <li><p>Return <var>link</var>'s <span>hyperlink referrer policy</span>.</p></li>
++  </ol>
++
++  <p>To <dfn>collect tags from speculative load candidates</dfn> given a <span>list</span> of <span
++  data-x="speculative load candidate">speculative load candidates</span> <var>candidates</var>:</p>
++
++  <ol>
++   <li><p>Let <var>tags</var> be an empty <span data-x="set">ordered set</span>.</p></li>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <var>candidate</var> of
++    <var>candidates</var>:</p>
++
++    <ol>
++     <li><p><span data-x="list iterate">For each</span> <var>tag</var> of <var>candidate</var>'s
++     <span data-x="sl-candidate-tags">tags</span>: <span data-x="set append">append</span>
++     <var>tag</var> to <var>tags</var>.</p></li>
++    </ol>
++   </li>
++
++   <li><p><span data-x="list sort">Sort in ascending order</span> <var>tags</var>, with
++   <var>tagA</var> being less than <var>tagB</var> if <var>tagA</var> is null, or if <var>tagA</var>
++   is <span>code unit less than</span> <var>tagB</var>.</p></li>
++
++   <li><p>Return <var>tags</var>.</p></li>
++  </ol>
++
++  <hr>
++
++  <p>To <dfn>find matching links</dfn> given a <code>Document</code> <var>document</var> and a
++  <span>document rule predicate</span> <var>predicate</var>:</p>
++
++  <ol>
++   <li><p>Let <var>links</var> be an empty <span>list</span>.</p></li>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <span>shadow-including descendant</span>
++    <var>descendant</var> of <var>document</var>, in <span>shadow-including tree order</span>:</p>
++
++    <ol>
++     <li><p>If <var>descendant</var> is not an <code>a</code> or <code>area</code> element with an
++     <code data-x="attr-hyperlink-href">href</code> attribute, then <span>continue</span>.</p></li>
++
++     <li>
++      <p>If <var>descendant</var> is not <span>being rendered</span> or is part of <span
++      data-x="skips its contents">skipped contents</span>, then <span>continue</span>.</p>
++
++      <p class="note">Such links, though present in <var>document</var>, aren't available for the
++      user to interact with, and thus are unlikely to be good candidates. In addition, they might
++      not have their style or layout computed, which might make selector matching less efficient in
++      user agents which skip some or all of that work for these elements.</p>
++     </li>
++
++     <li><p>If <var>descendant</var>'s <span data-x="concept-hyperlink-url">url</span> is null, or
++     its <span data-x="concept-url-scheme">scheme</span> is not an <span>HTTP(S) scheme</span>, then
++     <span>continue</span>.</p></li>
++
++     <li><p>If <var>predicate</var> <span data-x="dr-predicate-matches">matches</span>
++     <var>descendant</var>, then <span data-x="list append">append</span> <var>descendant</var> to
++     <var>links</var>.</p></li>
++    </ol>
++   </li>
++
++   <li><p>Return <var>links</var>.</p></li>
++  </ol>
++
++  <p>A <span>document rule predicate</span> <var>predicate</var> <dfn
++  data-x="dr-predicate-matches">matches</dfn> an <code>HTMLHyperlinkElementUtils</code>
++  <var>el</var> if the following steps return true:</p>
++
++  <ol>
++   <li>
++    <p>If <var>predicate</var> is a <span>document rule conjunction</span>:</p>
++
++    <ol>
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>clause</var> of <var>predicate</var>'s
++      <span data-x="sr-dr-c-clauses">clauses</span>:</p>
++
++      <ol>
++       <li><p>If <var>clause</var> does not <span data-x="dr-predicate-matches">match</span>
++       <var>el</var>, then return false.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Return true.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>predicate</var> is a <span>document rule disjunction</span>:</p>
++
++    <ol>
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>clause</var> of <var>predicate</var>'s
++      <span data-x="sr-dr-d-clauses">clauses</span>:</p>
++
++      <ol>
++       <li><p>If <var>clause</var> <span data-x="dr-predicate-matches">matches</span> <var>el</var>,
++       then return true.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Return false.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>predicate</var> is a <span>document rule negation</span>:</p>
++
++    <ol>
++     <li><p>If <var>predicate</var>'s <span data-x="sr-dr-n-clause">clause</span> <span
++     data-x="dr-predicate-matches">matches</span> <var>el</var>, then return false.</p></li>
++
++     <li><p>Return true.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>predicate</var> is a <span>document rule URL pattern predicate</span>:</p>
++
++    <ol>
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>pattern</var> of <var>predicate</var>'s
++      <span data-x="sr-dr-urlpattern-patterns">patterns</span>:</p>
++
++      <ol>
++       <li><p>If performing a <span data-x="url-pattern-match">match</span> given <var>pattern</var>
++       and <var>el</var>'s <span data-x="concept-hyperlink-url">url</span> gives a non-null value,
++       then return true.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Return false.</p></li>
++    </ol>
++   </li>
++
++   <li>
++    <p>If <var>predicate</var> is a <span>document rule selector predicate</span>:</p>
++
++    <ol>
++     <li>
++      <p><span data-x="list iterate">For each</span> <var>selector</var> of <var>predicate</var>'s
++      <span data-x="sr-dr-cssselector-selectors">selectors</span>:</p>
++
++      <ol>
++       <li><p>If performing a <span data-x="match a selector against an element">match</span> given
++       <var>selector</var> and <var>el</var> with the <span>scoping root</span> set to
++       <var>el</var>'s <span>root</span> returns sucess, then return true.</p></li>
++      </ol>
++     </li>
++
++     <li><p>Return false.</p></li>
++    </ol>
++   </li>
++
++   <li><p><span>Assert</span>: this step is not reached.</p></li>
++  </ol>
++
++  <hr>
++
++  <p>Speculation rules features use the <dfn>speculation rules task source</dfn>.</p>
++
++  <p class="note">Because speculative loading is generally less important than processing tasks for
++  the purpose of the current document, implementations might give <span
++  data-x="concept-task">tasks</span> enqueued here an especially low priority.</p>
++
++  <h4>Navigational prefetching</h4>
++
++  <p>For now, the navigational prefetching process is defined in the <cite>Prefetch</cite>
++  specification. Moving it into this standard is tracked in <a
++  href="https://github.com/whatwg/html/issues/11123">issue #11123</a>. <ref>PREFETCH</ref></p>
++
++  <p>This standard refers to the following concepts defined there:</p>
++
++  <ul class="brief">
++   <li><dfn
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record">prefetch
++   record</dfn>, and its items <dfn data-x="prefetch-record-source"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-source">source</dfn>,
++   <dfn data-x="prefetch-record-url"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-url">URL</dfn>,
++   <dfn data-x="prefetch-record-nvs-hint"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-no-vary-search-hint">No-Vary-Search
++   hint</dfn>, <dfn data-x="prefetch-record-referrer-policy"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-referrer-policy">referrer
++   policy</dfn>, <dfn data-x="prefetch-record-anonymization-policy"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-anonymization-policy">anonymization
++   policy</dfn>, <dfn data-x="prefetch-record-tags"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-tags">tags</dfn>,
++   and <dfn data-x="prefetch-record-state"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-state">state</dfn></li>
++
++   <li><dfn data-x="prefetch-record-cancel-and-discard"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-cancel-and-discard">cancel
++   and discard</dfn></li>
++
++   <li><dfn
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-still-being-speculated">still
++   being speculated</dfn></li>
++
++   <li><dfn data-x="document-prefetch-records"
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#document-prefetch-records">prefetch
++   records</dfn></li>
++
++   <li><dfn
++   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#start-a-referrer-initiated-navigational-prefetch">start
++   a referrer-initiated navigational prefetch</dfn></li>
++  </ul>
++
++  <h4>The `<code>Speculation-Rules</code>` header</h4>
++
++  <p>The `<dfn http-header><code>Speculation-Rules</code></dfn>` HTTP response header allows the
++  developer to request that the user agent fetch and apply a given <span>speculation rule set</span>
++  to the current <code>Document</code>. It is a <span data-x="http-structured-header">structured
++  header</span> whose value must be a <span data-x="http-structured-header-list">list</span> of
++  <span data-x="http-structured-header-string">strings</span> that are all <span data-x="valid URL
++  string">valid URL strings</span>.</p>
++
++  <p>To <dfn>process the `<code>Speculation-Rules</code>` header</dfn> given a <code>Document</code>
++  <var>document</var> and a <span data-x="concept-response">response</span> <var>response</var>:</p>
++
++  <ol>
++   <li><p>Let <var>parsedList</var> be the result of <span>getting a structured field value</span>
++   given `<code>Speculation-Rules</code>` and "<code data-x="">list</code>" from
++   <var>response</var>'s <span data-x="concept-response-header-list">header list</span>.</p></li>
++
++   <li><p>If <var>parsedList</var> is null, then return.</p></li>
++
++   <li>
++    <p><span data-x="list iterate">For each</span> <var>item</var> of <var>parsedList</var>:</p>
++
++    <ol>
++     <li><p>If <var>item</var> is not a <span>string</span>, then <span>continue</span>.</p></li>
++
++     <li><p>Let <var>url</var> be the result of <span data-x="URL parser">URL parsing</span>
++     <var>item</var> with <var>document</var>'s <span>document base URL</span>.</p></li>
++
++     <li><p>If <var>url</var> is failure, then <span>continue</span>.</p></li>
++
++     <li>
++      <p><span>In parallel</span>:</p>
++
++      <ol>
++       <li>
++        <p>Optionally, wait for an <span>implementation-defined</span> amount of time.</p>
++
++        <p class="note">This allows the implementation to prioritize other work ahead of loading
++        speculation rules, as especially during <code>Document</code> creation and header
++        processing, there are often many more important things going on.</p>
++       </li>
++
++       <li>
++        <p><span>Queue a task</span> on the <span>speculation rules task source</span> to perform
++        the following steps:</p>
++
++        <ol>
++         <li><p>Let <var>request</var> be a new <span data-x="concept-request">request</span> whose
++         <span data-x="concept-request-url">URL</span> is <var>url</var>, <span
++         data-x="concept-request-client">client</span> is <var>document</var>'s <span>relevant
++         settings object</span>, <span data-x="concept-request-destination">destination</span> is
++         "<code data-x="">speculationrules</code>", and <span
++         data-x="concept-request-mode">mode</span> is "<code data-x="">cors</code>".</p></li>
++
++         <li>
++          <p><span data-x="concept-fetch">Fetch</span> <var>request</var> with the following <i
++          data-x="processResponseConsumeBody">processResponseConsumeBody</i> steps given <span
++          data-x="concept-response">response</span> <var>response</var> and null, failure, or a
++          <span>byte sequence</span> <var>bodyBytes</var>:</p>
++
++          <ol>
++           <li><p>If <var>bodyBytes</var> is null or failure, then abort these steps.</p></li>
++
++           <li><p>If <var>response</var>'s <span data-x="concept-response-status">status</span> is
++           not an <span>ok status</span>, then abort these steps.</p></li>
++
++           <li><p>If the result of <span data-x="extract a MIME type">extracting a MIME type</span>
++           from <var>response</var>'s <span data-x="concept-response-header-list">header list</span>
++           does not have an <span data-x="MIME type essence">essence</span> of
++           "<code>application/speculationrules+json</code>", then abort these steps.</p></li>
++
++           <li><p>Let <var>bodyText</var> be the result of <span data-x="UTF-8 decode">UTF-8
++           decoding</span> <var>bodyBytes</var>.</p></li>
++
++           <li><p>Let <var>ruleSet</var> be the result of <span data-x="parse a speculation rule set
++           string">parsing a speculation rule set string</span> given <var>bodyText</var>,
++           <var>document</var>, and <var>response</var>'s <span
++           data-x="concept-response-url">URL</span>. If this throws an exception, then abort these
++           steps.</p></li>
++
++           <li><p><span data-x="list append">Append</span> <var>ruleSet</var> to
++           <var>document</var>'s <span data-x="document-sr-sets">speculation rule
++           sets</span>.</p></li>
++
++           <li><p><span>Consider speculative loads</span> for <var>document</var>.</p></li>
++          </ol>
++         </li>
++        </ol>
++       </li>
++      </ol>
++     </li>
++    </ol>
++   </li>
++  </ol>
++
++
++  <h4>The `<code>Sec-Speculation-Tags</code>` header</h4>
++
++  <p>The `<dfn http-header><code>Sec-Speculation-Tags</code></dfn>` HTTP request header specifies
++  the web developer-provided tags associated with the speculative navigation request. It can also be
++  used to distinguish speculative navigation requests from speculative subresource requests, since
++  `<code>Sec-Purpose</code>` can be sent by both categories of requests.</p>
++
++  <p>The header is a <span data-x="http-structured-header">structured header</span> whose value must
++  be a <span data-x="http-structured-header-list">list</span>. The list can contain either <span
++  data-x="http-structured-header-token">token</span> or <span
++  data-x="http-structured-header-string">string</span> values. String values represent
++  developer-provided tags, whereas token values represent predefined tags. As of now, the only
++  predefined tag is <code data-x="">null</code>, which indicates a speculative navigation request
++  with no developer-defined tag.</p>
++
++
++  <h4 id="speculative-loading-security">Security considerations</h4>
++
++
++  <h5 id="speculative-loading-cross-site-requests">Cross-site requests</h5>
++
++  <p>Speculative loads can be initiated by web pages to cross-site destinations. However, because
++  such cross-site speculative loads are always done without <span>credentials</span>, as explained
++  <a href="speculative-loading-state-partitioning">below</a>, ambient authority is limited to
++  requests that are already possible via other mechanisms on the platform.</p>
++
++  <p>The `<code>Speculation-Rules</code>` header can also be used to issue requests. However, they
++  use the "<code data-x="">same-origin</code>" <span
++  data-x="concept-request-credentials-mode">credentials mode</span>, the "<code
++  data-x="">cors</code>" <span data-x="concept-request-mode">mode</span>, and responses which do not
++  use the <code>application/speculationrules+json</code> <span>MIME type essence</span> are ignored,
++  so they are not useful in mounting attacks.</p>
++
++
++  <h5 id="speculative-loading-injected-content">Injected content</h5>
++
++  <p>Because links in a document can be selected for speculative loading via <span data-x="document
++  rule predicate">document rule predicates</span>, developers need to be cautious if such links
++  might contain user-generated markup. Using a <span>document rule selector predicate</span> to
++  exclude such potentially-dangerous links, or using a <span>document rule URL pattern
++  predicate</span> to allowlist known-safe links, are useful techniques in this regard.</p>
++
++  <p>As with all uses of the <code>script</code> element, developers need to be cautious about
++  inserting user-provided content into <code data-x="">&lt;script type=speculationrules></code>'s
++  <span>child text content</span>. In particular, the insertion of an unescaped closing <code
++  data-x="">&lt;/script></code> tag could be used to break out of the <code>script</code> element
++  context and inject attacker-controlled markup.</p>
++
++  <p>The <code data-x="">&lt;script type=speculationrules></code> feature causes activity in
++  response to content found in the document, so it is worth considering the options open to an
++  attacker able to inject unescaped HTML. Such an attacker is already able to inject JavaScript or
++  <code>iframe</code> elements. Speculative loads are generally less dangerous than arbitrary script
++  execution. However, the use of <span data-x="document rule predicate">document rule
++  predicates</span> could be used to speculatively load links in the document, and the existence of
++  those loads could provide a vector for exfiltrating information about those links.
++  Defense-in-depth against this possibility is provided by Content Security Policy. In particular,
++  the <code data-x="">script-src</code> directive can be used to restrict the parsing of speculation
++  rules <code>script</code> elements, and the <code data-x="">default-src</code> directive applies
++  to navigational prefetch requests arising from such speculation rules. Additional defense is
++  provided by the requirement that speculative loads are only performed to <span data-x="Is url
++  potentially trustworthy?">potentially-trustworthy URLs</span>, so an on-path attacker would only
++  have access to metadata and traffic analysis, and could not see the URLs directly.
++  <ref>CSP</ref></p>
++
++  <p>It's generally not expected that user-generated content will be added as arbitrary response
++  headers: server operators are already going to encounter significant trouble if this is possible.
++  It is therefore unlikely that the `<code>Speculation-Rules</code>` header meaningfully expands the
++  XSS attack surface. For this reason, Content Security Policy does not apply to the loading of rule
++  sets via that header.</p>
++
++
++  <h5 id="speculative-loading-ip-anonymization">IP anonymization</h5>
++
++  <p>This standard allows developers to request that navigational prefetches are performed using IP
++  anonymization technology provided by the user agent. The details of this anonymization are not
++  specified, but some general security principles apply.</p>
++
++  <p>To the extent IP anonymization is implemented using a proxy service, it is advisable to
++  minimize the information available to the service operator and other entities on the network path.
++  This likely involves, at a minimum, the use of TLS for the connection.</p>
++
++  <p>Site operators need to be aware that, similar to virtual private network (VPN) technology, the
++  client IP address seen by the HTTP server might not exactly correspond to the user's actual
++  network provider or location, and a traffic for multiple distinct subscribers could originate from
++  a single client IP address. This can affect site operators' security and abuse prevention
++  measures. IP anonymization measures might make an effort to use an egress IP address which has a
++  similar geolocation or is located in the same jurisdiction as the user, but any such behavior is
++  particular to the user agent and not guaranteed.</p>
++
++
++  <h4 id="speculative-loading-privacy">Privacy considerations</h4>
++
++
++  <h5 id="speculative-loading-heuristics">Heuristics and optionality</h5>
++
++  <p>The <span>consider speculative loads</span> algorithm contains a crucial "may" step, which
++  encourages user agents to <span data-x="start a referrer-initiated navigational prefetch">start
++  referrer-initiated navigational prefetches</span> based on a combination of the <span>speculation
++  rule eagerness</span> and other features of the user's environment. Because it can be observable
++  to the document whether speculative loads are performed, user agents must take care to protect
++  privacy when making such decisions—for instance by only using information which is already
++  available to the origin. If these heuristics depend on any persistent state, that state must be
++  erased whenever the user erases other site data. If the user agent automatically clears other site
++  data from time to time, it must erase such persistent state at the same time.</p>
++
++  <p class="note">The use of <span>origin</span> instead of <span>site</span> here is intentional.
++  Although same-site origins are generally allowed to coordinate if they wish, the web's security
++  model is premised on preventing origins from accessing the data of other origins, even same-site
++  ones. Thus, the user agent needs to be sure not to leak such data unintentionally across origins,
++  not just across sites.</p>
++
++  <p>Examples of inputs which would be already known to the document:</p>
++
++  <ul>
++   <li><p>author-supplied <span data-x="speculation rule eagerness">eagerness</span></p></li>
++   <li><p>order of appearance in the document</p></li>
++   <li><p>whether a link is in the viewport</p></li>
++   <li><p>whether the cursor is near a link</p></li>
++   <li><p>rendered size of a link</p></li>
++  </ul>
++
++  <p>Examples of persistent data related to the origin (which the origin could have gathered itself)
++  but which must be erased according to user intent:</p>
++
++  <ul>
++   <li><p>whether the user has clicked this or similar links on this document or other documents on
++   the same origin</p></li>
++  </ul>
++
++  <p>Examples of device information which might be valuable in deciding whether speculative loading
++  is appropriate, but which needs to be considered as part of the user agent's overall privacy
++  posture because it can make the user more identifiable across origins:</p>
++
++  <ul>
++   <li><p>coarse device class (CPU, memory)</p></li>
++   <li><p>coarse battery level</p></li>
++   <li><p>whether the network connection is known to be metered</p></li>
++   <li><p>any user-toggleable settings, such as a speculative loading toggle, a battery-saver
++   toggle, or a data-saver toggle</p></li>
++  </ul>
++
++
++  <h5 id="speculative-loading-state-partitioning">State partitioning</h5>
++
++  <p>The <span>start a referrer-initiated navigational prefetch</span> algorithm is designed to
++  ensure that the HTTP requests that it issues behave consistently with how user agents partition
++  <span>credentials</span> according to <span data-x="storage key">storage keys</span>. This
++  property is maintained even for cross-partition prefetches, as follows.</p>
++
++  <p>If a future navigation using a prefetched response would load a document in the same partition,
++  then at prefetch time, the partitioned credentials can be sent, as they can with subresource
++  requests and scripted fetches. If such a future navigation would instead load a document in
++  another partition, it would be inconsistent with the partitioning scheme to use partitioned
++  credentials for the destination partition (since this would cross the boundary between partitions
++  without a top-level navigation) and also inconsistent to use partitioned credentials within the
++  originating partition (since this would result in the user seeing a document with different state
++  than a non-prefetched navigation). Instead, a third, initially empty, partition is used for such
++  requests. These requests therefore send along no credentials from either partition. However, the
++  resulting prefetched response body constructed using this initially-empty partition can only be
++  used if, at activation time, the destination partition contains no credentials.</p>
++
++  <p>This is somewhat similar to the behavior of only sending such prefetch requests if the
++  destination partition is known ahead of time to not contain credentials. However, to avoid such
++  behavior being used a way of probing for the presence of credentials, instead such prefetch
++  requests are always completed, and in the case of conflicting credentials, their results are not
++  used.</p>
++
++  <p>Redirects are possible between these two types of requests. A redirect from a same- to
++  cross-partition URL could contain information derived from partitioned credentials in the
++  originating partition; however, this is equivalent to the originating document fetching the
++  same-partition URL itself and then issuing a request for the cross-partition URL. A redirect from
++  a cross- to same-origin URL could carry credentials from the isolated partition, but since this
++  partition has no prior state this does not enable tracking based on the user's prior browsing
++  activity on that site, and the document could construct the same state by issuing uncredentialed
++  requests itself.</p>
++
++  <!-- PRERENDERING: discuss how we just don't allow cross-partition prerendering due to there being way more state than just credentials. -->
++
++
++  <h5 id="speculative-loading-identity-joining">Identity joining</h5>
++
++  <p>Speculative loads provide a mechanism through which HTTP requests for later top-level
++  navigation can be made without a user gesture. It is natural to ask whether it is possible for two
++  coordinating sites to connect user identities.</p>
++
++  <p>Since existing <span>credentials</span> for the destination site are not sent (as explained in
++  the previous section), that site is limited in its ability to identify the user before navigation
++  in a similar way to if the referrer site had simply used <code>fetch()</code> to make an
++  uncredentialed request. Upon navigation, this becomes similar to ordinary navigation (e.g., by
++  clicking a link that was not speculatively loaded).</p>
++
++  <p>To the extent that user agents attempt to mitigate identity joining for ordinary fetches and
++  navigations, they can apply similar mitigations to speculatively-loaded navigations.</p>
++
++
+@@ -111727,0 +113918,81 @@ <h5>Import map parse results</h5>
++
++  <h5>Speculation rules parse results</h5>
++
++  <p>A <dfn>speculation rules parse result</dfn> is a <span>struct</span> that is similar to a <span
++  data-x="concept-script">script</span>, and also can be stored in a <code>script</code> element's
++  <span data-x="concept-script-result">result</span>, but is not counted as a <span
++  data-x="concept-script">script</span> for other purposes. It has the following <span
++  data-x="struct item">items</span>:</p>
++
++  <dl>
++   <dt>A <dfn data-x="srpr-sr-set">speculation rule set</dfn></dt>
++   <dd>A <span>speculation rule set</span> or null.</dd>
++
++   <dt>An <dfn data-x="srpr-error-to-rethrow">error to rethrow</dfn></dt>
++   <dd>A JavaScript value representing an error that will prevent using these speculation rules,
++   when non-null.</dd>
++  </dl>
++
++  <p>To <dfn>create a speculation rules parse result</dfn> given a <span>string</span>
++  <var>input</var> and a <code>Document</code> <var>document</var>:</p>
++
++  <ol>
++   <li><p>Let <var>result</var> be a <span>speculation rules parse result</span> whose <span
++   data-x="srpr-sr-set">import map</span> is null and whose <span
++   data-x="srpr-error-to-rethrow">error to rethrow</span> is null.</p></li>
++
++   <li><p><span>Parse a speculation rule set string</span> given <var>input</var>,
++   <var>document</var>, and <var>document</var>'s <span>document base URL</span>, catching any
++   exceptions. If this threw an exception, then set <var>result</var>'s <span
++   data-x="srpr-error-to-rethrow">error to rethrow</span> to that exception. Otherwise, set
++   <var>result</var>'s <span data-x="srpr-sr-set">speculation rule set</span> to the return
++   value.</p></li>
++
++   <li><p>Return <var>result</var>.</p></li>
++  </ol>
++
++  <p>To <dfn>register speculation rules</dfn> given a <code>Window</code> <var>global</var> and a
++  <span>speculation rules parse result</span> <var>result</var>:</p>
++
++  <ol>
++   <li><p>If <var>result</var>'s <span data-x="srpr-error-to-rethrow">error to rethrow</span> is not
++   null, then <span>report an exception</span> given by <var>result</var>'s <span
++   data-x="srpr-error-to-rethrow">error to rethrow</span> for <var>global</var> and return.</p></li>
++
++   <li><p><span data-x="list append">Append</span> <var>result</var>'s <span
++   data-x="srpr-sr-set">speculation rule set</span> to <var>global</var>'s <span
++   data-x="concept-document-window">associated <code>Document</code></span>'s <span
++   data-x="document-sr-sets">speculation rule sets</span>.</p></li>
++
++   <li><p><span>Consider speculative loads</span> for <var>document</var>.</p></li>
++  </ol>
++
++  <p>To <dfn>unregister speculation rules</dfn> given a <code>Window</code> <var>global</var> and a
++  <span>speculation rules parse result</span> <var>result</var>:</p>
++
++  <ol>
++   <li><p>If <var>result</var>'s <span data-x="srpr-error-to-rethrow">error to rethrow</span> is not
++   null, then return.</p></li>
++
++   <li><p><span data-x="list remove">Remove</span> <var>result</var>'s <span
++   data-x="srpr-sr-set">speculation rule set</span> from <var>global</var>'s <span
++   data-x="concept-document-window">associated <code>Document</code></span>'s <span
++   data-x="document-sr-sets">speculation rule sets</span>.</p></li>
++
++   <li><p><span>Consider speculative loads</span> for <var>document</var>.</p></li>
++  </ol>
++
++  <p>To <dfn>update speculation rules</dfn> given a <code>Window</code> <var>global</var>, a
++  <span>speculation rules parse result</span> <var>oldResult</var>, and a <span>speculation rules
++  parse result</span> <var>newResult</var>:</p>
++
++  <ol>
++   <li><p><span data-x="list remove">Remove</span> <var>oldResult</var>'s <span
++   data-x="srpr-sr-set">speculation rule set</span> from <var>global</var>'s <span
++   data-x="concept-document-window">associated <code>Document</code></span>'s <span
++   data-x="document-sr-sets">speculation rule sets</span>.</p></li>
++
++   <li><p><span>Register speculation rules</span> given <var>global</var> and
++   <var>newResult</var>.</p></li>
++  </ol>
++
+@@ -142729,0 +145001,63 @@ <h3><dfn><code>application/microdata+json</code></dfn></h3>
++  <h3><dfn><code>application/speculationrules+json</code></dfn></h3>
++
++  <p>This registration is for community review and will be submitted to the IESG for review,
++  approval, and registration with IANA.</p>
++
++  <!--
++   To: ietf-types@iana.org
++   Subject: Registration of media type application/microdata+json
++  -->
++
++  <dl>
++   <dt>Type name:</dt>
++   <dd>application</dd>
++   <dt>Subtype name:</dt>
++   <dd>microdata+json</dd>
++   <dt>Required parameters:</dt>
++   <dd>Same as for <code>application/json</code> <ref>JSON</ref></dd>
++   <dt>Optional parameters:</dt>
++   <dd>Same as for <code>application/json</code> <ref>JSON</ref></dd>
++   <dt>Encoding considerations:</dt>
++   <dd>8bit (always UTF-8)</dd>
++   <dt>Security considerations:</dt>
++   <dd>Same as for <code>application/json</code> <ref>JSON</ref></dd>
++   <dt>Interoperability considerations:</dt>
++   <dd>Same as for <code>application/json</code> <ref>JSON</ref></dd>
++   <dt>Published specification:</dt>
++   <dd>
++    Labeling a resource with the <code>application/microdata+json</code> type asserts that the
++    resource is a JSON text that follows the <span>speculation rule set authoring requirements</span>. Thus, the relevant specifications are
++    <cite>JSON</cite> and this specification. <ref>JSON</ref>
++   </dd>
++   <dt>Applications that use this media type:</dt>
++   <dd>
++    <p>Web browsers.</p>
++   </dd>
++   <dt>Additional information:</dt>
++   <dd>
++    <dl>
++     <dt>Magic number(s):</dt>
++     <dd>Same as for <code>application/json</code> <ref>JSON</ref></dd>
++     <dt>File extension(s):</dt>
++     <dd>Same as for <code>application/json</code> <ref>JSON</ref></dd>
++     <dt>Macintosh file type code(s):</dt>
++     <dd>Same as for <code>application/json</code> <ref>JSON</ref></dd>
++    </dl>
++   </dd>
++   <dt>Person &amp; email address to contact for further information:</dt>
++   <dd>Domenic Denicola &lt;d@domenic.me></dd>
++   <dt>Intended usage:</dt>
++   <dd>Common</dd>
++   <dt>Restrictions on usage:</dt>
++   <dd>No restrictions apply.</dd>
++   <dt>Author:</dt>
++   <dd>Domenic Denicola &lt;d@domenic.me></dd>
++   <dt>Change controller:</dt>
++   <dd>WHATWG</dd>
++  </dl>
++
++  <p><span data-x="concept-url-fragment">Fragments</span> used with
++  <code>application/speculationrules+json</code> resources have the same semantics as when used with
++  <code>application/json</code> (namely, at the time of writing, no semantics at all).
++  <ref>JSON</ref></p>
++
+@@ -146054 +148388 @@ <h3 class="no-num">Attributes</h3>
+-     <td> "<code data-x="">module</code>"; a <span>valid MIME type string</span> that is not a <span>JavaScript MIME type essence match</span>
++     <td> "<code data-x="">module</code>"; "<code data-x="">importmap</code>"; "<code data-x="">speculationrules</code>"; a <span>valid MIME type string</span> that is not a <span>JavaScript MIME type essence match</span>
+@@ -147979,0 +150314,3 @@ <h2 split-filename="references" class="no-num" id="references">References</h2><!
++   <dt id="refsNOVARYSEARCH">[NOVARYSEARCH]</dt>
++   <dd><cite><a href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html">The No-Vary-Search HTTP Response Header Field</a></cite>, D. Denicola, J. Roman. IETF.</dd>
++
+@@ -148024,0 +150362,3 @@ <h2 split-filename="references" class="no-num" id="references">References</h2><!
++   <dt id="refsPREFETCH">[PREFETCH]</dt>
++   <dd><cite><a href="https://wicg.github.io/nav-speculation/prefetch.html">Prefetch</a></cite>, J. Roman. WICG.</dd>
++
+@@ -148114,0 +150455,3 @@ <h2 split-filename="references" class="no-num" id="references">References</h2><!
++   <dt id="refsSPECULATIONRULES">[SPECULATIONRULES]</dt>
++   <dd>(Non-normative) <cite><a href="https://wicg.github.io/nav-speculation/speculation-rules.html">Speculation Rules</a></cite>, J. Roman. W3C.</dd>
++
+@@ -148161,0 +150505,3 @@ <h2 split-filename="references" class="no-num" id="references">References</h2><!
++   <dt id="refsURLPATTERN">[URLPATTERN]</dt>
++   <dd><cite><a href="https://urlpattern.spec.whatwg.org/">URL Pattern</a></cite>, B. Kelly, J. Roman, 宍戸俊哉. WHATWG.</dd>
++
+@@ -149480,0 +151827,4 @@ <h2 split-filename="acknowledgements" id="acknowledgments" class="no-num">Acknow
++  <p>Special thanks to the <a href="https://wicg.io/">WICG</a> for incubating the <a
++  href="#speculative-loading">speculative loading</a> feature. In particular, thanks to Jeremy Roman
++  for his work as editor of the original speculation rules and prefetch specifications.</p>
++
+@@ -149607,0 +151958,7 @@ <h2 id="ipr" class="no-num">Intellectual property rights</h2>
++  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <a
++  href="#speculative-loading">Speculative loading</a> section can be
++  found in the <a href="https://github.com/WICG/nav-speculation"><code>WICG/nav-speculation</code>
++  repository</a>, which is available under the <a itemprop="license"
++  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
++  Document License</a>.</p>
++

@@ -1,0 +1,16 @@
+diff --git a/testcases/git_diff/duplicate-lines-new.in.html b/testcases/git_diff/duplicate-lines-new.in.html
+index b479b15..3ac3ae2 100644
+--- a/testcases/git_diff/duplicate-lines-new.in.html
++++ b/testcases/git_diff/duplicate-lines-new.in.html
+@@ -15,6 +15,11 @@
+     JSON that will be used to control the behavior of <span data-x="resolve a module
+     specifier">module specifier resolution</span>.</p></li>
+ 
++    <li><p>Setting the attribute to an <span>ASCII case-insensitive</span> match for "<code
++    data-x="">speculationrules</code>" means that the script defines a <span>speculation rule
++    set</span>, containing JSON that will be used to describe <a
++    href="#speculative-loading">speculative loads</a>.</p></li>
++
+     <li>
+      <p>Setting the attribute to any other value means that the script is a <dfn>data block</dfn>,
+      which is not processed by the user agent, but instead by author script or other tools.

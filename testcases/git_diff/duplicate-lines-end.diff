@@ -1,0 +1,14 @@
+diff --git a/testcases/git_diff/duplicate-lines-end.in.html b/testcases/git_diff/duplicate-lines-end.in.html
+index b71a8c4..8f7d3ee 100644
+--- a/testcases/git_diff/duplicate-lines-end.in.html
++++ b/testcases/git_diff/duplicate-lines-end.in.html
+@@ -1,5 +1,9 @@
+ Some content that has bad formatting whoah is me whoah is me this is awful how could I ever write this damn.
+ Some content that has bad formatting whoah is me whoah is me this is awful how could I ever write this damn.
++
++This is new stuff
++
++
+ Some content that has bad formatting whoah is me whoah is me this is awful how could I ever write this damn.
+ Some content that has bad formatting whoah is me whoah is me this is awful how could I ever write this damn.
+ Some content that has bad formatting whoah is me whoah is me this is awful how could I ever write this damn.
