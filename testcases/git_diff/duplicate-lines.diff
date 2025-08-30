@@ -1,8 +1,9 @@
 diff --git a/testcases/git_diff/duplicate-lines.in.html b/testcases/git_diff/duplicate-lines.in.html
-index f4dccf2..c4bf743 100644
+index 5216e21..681e500 100644
 --- a/testcases/git_diff/duplicate-lines.in.html
 +++ b/testcases/git_diff/duplicate-lines.in.html
-@@ -1,2 +1,4 @@
+@@ -3,3 +3,5 @@ the git diff, but the first line gets formatted. See documentation above `apply_
+ 
  
                            <p>This is my specification and it is intended for authors of documents and scripts that use the features defined in this specification<span w-nodev>, implementers ......</span>.</p>
 +
