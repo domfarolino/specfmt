@@ -238,7 +238,63 @@ fn sanitized_diff_lines(diff: &str) -> Vec<&str> {
         .collect()
 }
 
-// Parse git diff output to extract line numbers that were added/modified
+// Parse git diff output to extract line numbers that were added/modified.
+//
+// This function implements a line-by-line parser that tracks the relationship between
+// the git diff format and the actual line numbers in the source file being formatted.
+//
+// ## Algorithm Overview
+//
+// The git diff format uses `@@` lines to indicate line number context:
+// ```
+// @@ -old_start,old_count +new_start,new_count @@
+// ```
+//
+// For example, `@@ -10,3 +10,5 @@` means:
+// - Remove 3 lines starting at line 10 in the old file
+// - Add 5 lines starting at line 10 in the new file
+//
+// ## Line Number Tracking Logic
+//
+// The parser maintains a `current_line_number` that represents the line number
+// in the new file (the file we're formatting). This number is updated as we
+// process each line in the diff:
+//
+// 1. **Header lines** (`+++`, `---`, `index`, `diff`): Skipped, no line number change
+// 2. **@@ lines**: Set `current_line_number` to the `+new_start` value from the @@ line
+// 3. **`+` lines** (additions):
+//    - Add `current_line_number` to the result list of lines that need formatting (because
+//      this content exists in the new file, *and* the git diff)
+//    - Increment `current_line_number` (this line exists in the new file)
+// 4. **`-` lines** (deletions):
+//    - Don't add this line number to the result list of lines that need formatting (because this
+//      content doesn't exist in the new file)
+//    - Don't increment `current_line_number`
+// 5. **Space lines** (unchanged context):
+//    - Don't add this line number to the result list of lines that need formatting (because while
+//      this content exists in the new file, it only appears in the git diff output as context, not
+//      lines that were touched in the current branch)
+//    - Increment `current_line_number` (this line exists in the new file)
+//
+// ## Example
+//
+// For a diff like:
+// ```
+// @@ -5,2 +5,3 @@
+//  unchanged line
+// -deleted line
+// +added line 1
+// +added line 2
+// ```
+//
+// The parser would:
+// - Start at line 5 (from `+5` in @@ line)
+// - Skip the unchanged line, increment to line 6
+// - Skip the deleted line, stay at line 6
+// - Add line 6 to result, increment to line 7
+// - Add line 7 to result, increment to line 8
+//
+// Result: `[6, 7]` (lines 6 and 7 in the source file that need formatting)
 fn parse_diff_line_numbers(diff: &str) -> Vec<usize> {
     let mut line_numbers = Vec::new();
     let mut current_line_number = 0;
