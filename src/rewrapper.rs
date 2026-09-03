@@ -253,6 +253,88 @@ fn wrap_lines(lines: Vec<OwnedLine>, column_length: u8) -> Vec<String> {
     rewrapped_lines
 }
 
+// Finds the `[start, end]` byte ranges of every `<img ...>` tag in `line`,
+// where `end` is the index of the tag's closing `>`. Quoted attribute values
+// are tracked, so a `>` inside an attribute value doesn't end the tag early.
+fn img_tag_ranges(line: &str) -> Vec<(usize, usize)> {
+    let mut ranges = Vec::<(usize, usize)>::new();
+    let bytes = line.as_bytes();
+    let mut search_start = 0;
+
+    while let Some(offset) = line[search_start..].find("<img") {
+        let tag_start = search_start + offset;
+        let after_name = tag_start + "<img".len();
+
+        // Only an exact `img` tag name counts; this skips over things like
+        // `<image` or `<imgfoo`.
+        if !matches!(bytes.get(after_name), Some(b' ') | Some(b'\t') | Some(b'/') | Some(b'>')) {
+            search_start = after_name;
+            continue;
+        }
+
+        let mut quote: Option<u8> = None;
+        let mut tag_end: Option<usize> = None;
+        for (i, &byte) in bytes.iter().enumerate().skip(after_name) {
+            match byte {
+                b'"' | b'\'' => {
+                    if quote == Some(byte) {
+                        quote = None;
+                    } else if quote.is_none() {
+                        quote = Some(byte);
+                    }
+                }
+                b'>' if quote.is_none() => {
+                    tag_end = Some(i);
+                    break;
+                }
+                _ => {}
+            }
+        }
+
+        match tag_end {
+            Some(tag_end) => {
+                ranges.push((tag_start, tag_end));
+                search_start = tag_end + 1;
+            }
+            // An unterminated tag; there is nothing left on this line that we
+            // could keep together anyways.
+            None => break,
+        }
+    }
+
+    ranges
+}
+
+// Splits `line` on spaces, the same way `str::split(' ')` would, except that
+// `<img ...>` tags are never split. That keeps image elements on a single line,
+// since wrapping in the middle of one makes the source much harder to read.
+fn split_into_words(line: &str) -> Vec<&str> {
+    let img_ranges = img_tag_ranges(line);
+    if img_ranges.is_empty() {
+        return line.split(' ').collect();
+    }
+
+    let mut words = Vec::<&str>::new();
+    let mut word_start = 0;
+    for (i, character) in line.char_indices() {
+        if character != ' ' {
+            continue;
+        }
+        // Spaces inside an image tag are not word boundaries.
+        if img_ranges
+            .iter()
+            .any(|&(tag_start, tag_end)| i > tag_start && i < tag_end)
+        {
+            continue;
+        }
+        words.push(&line[word_start..i]);
+        word_start = i + 1;
+    }
+    words.push(&line[word_start..]);
+
+    words
+}
+
 fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
     let mut return_lines = Vec::<String>::new();
     let indent = line
@@ -298,7 +380,7 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
         String::new()
     };
 
-    let mut words = line.split(' ');
+    let mut words = split_into_words(line).into_iter();
     // This will never panic; even if `line` is empty after we trim it, the
     // split collection will contain a single empty string. See
     // https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=1035caa5a7a4324272c8966d36d323b4.
