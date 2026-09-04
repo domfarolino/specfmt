@@ -253,24 +253,41 @@ fn wrap_lines(lines: Vec<OwnedLine>, column_length: u8) -> Vec<String> {
     rewrapped_lines
 }
 
-// Finds the `[start, end]` byte ranges of every `<img ...>` tag in `line`,
-// where `end` is the index of the tag's closing `>`. Quoted attribute values
-// are tracked, so a `>` inside an attribute value doesn't end the tag early.
-fn img_tag_ranges(line: &str) -> Vec<(usize, usize)> {
+// Tags whose start tag is never broken across lines, since wrapping in the
+// middle of one makes the source much harder to read.
+const UNSPLITTABLE_TAGS: [&str; 2] = ["img", "iframe"];
+
+// Finds the `[start, end]` byte ranges of every start tag in `line` whose tag
+// name is in `UNSPLITTABLE_TAGS`, where `end` is the index of the tag's closing
+// `>`. Quoted attribute values are tracked, so a `>` inside an attribute value
+// doesn't end the tag early.
+fn unsplittable_tag_ranges(line: &str) -> Vec<(usize, usize)> {
     let mut ranges = Vec::<(usize, usize)>::new();
     let bytes = line.as_bytes();
     let mut search_start = 0;
 
-    while let Some(offset) = line[search_start..].find("<img") {
+    while let Some(offset) = line[search_start..].find('<') {
         let tag_start = search_start + offset;
-        let after_name = tag_start + "<img".len();
+        let after_name = UNSPLITTABLE_TAGS.iter().find_map(|tag| {
+            let after_name = tag_start + 1 + tag.len();
+            // Only an exact tag name counts; this skips over things like
+            // `<image` or `<imgfoo`.
+            if line[tag_start + 1..].starts_with(tag)
+                && matches!(bytes.get(after_name), Some(b' ') | Some(b'\t') | Some(b'/') | Some(b'>'))
+            {
+                Some(after_name)
+            } else {
+                None
+            }
+        });
 
-        // Only an exact `img` tag name counts; this skips over things like
-        // `<image` or `<imgfoo`.
-        if !matches!(bytes.get(after_name), Some(b' ') | Some(b'\t') | Some(b'/') | Some(b'>')) {
-            search_start = after_name;
-            continue;
-        }
+        let after_name = match after_name {
+            Some(after_name) => after_name,
+            None => {
+                search_start = tag_start + 1;
+                continue;
+            }
+        };
 
         let mut quote: Option<u8> = None;
         let mut tag_end: Option<usize> = None;
@@ -306,11 +323,10 @@ fn img_tag_ranges(line: &str) -> Vec<(usize, usize)> {
 }
 
 // Splits `line` on spaces, the same way `str::split(' ')` would, except that
-// `<img ...>` tags are never split. That keeps image elements on a single line,
-// since wrapping in the middle of one makes the source much harder to read.
+// the start tags of `UNSPLITTABLE_TAGS` elements are never split.
 fn split_into_words(line: &str) -> Vec<&str> {
-    let img_ranges = img_tag_ranges(line);
-    if img_ranges.is_empty() {
+    let tag_ranges = unsplittable_tag_ranges(line);
+    if tag_ranges.is_empty() {
         return line.split(' ').collect();
     }
 
@@ -320,8 +336,8 @@ fn split_into_words(line: &str) -> Vec<&str> {
         if character != ' ' {
             continue;
         }
-        // Spaces inside an image tag are not word boundaries.
-        if img_ranges
+        // Spaces inside an unsplittable tag are not word boundaries.
+        if tag_ranges
             .iter()
             .any(|&(tag_start, tag_end)| i > tag_start && i < tag_end)
         {
