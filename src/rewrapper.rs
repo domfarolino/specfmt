@@ -404,7 +404,17 @@ fn wrap_single_line(line: &str, column_length: u8) -> Vec<String> {
     let mut current_line = indent.clone() + first_word;
 
     for word in words {
-        if current_line.chars().count() + 1 + word.chars().count() <= column_length.into() {
+        // A word that is over-long only because it swallowed an
+        // unsplittable tag overflows whatever line it lands on, and nothing
+        // can follow it on that line either way, so breaking before it buys
+        // nothing and just leaves a stub such as `<p` behind. Words that are
+        // over-long on their own, such as a long URL, keep breaking as before.
+        let word_never_fits = word.chars().count() > column_length.into()
+            && !unsplittable_tag_ranges(word).is_empty();
+
+        if current_line.chars().count() + 1 + word.chars().count() <= column_length.into()
+            || word_never_fits
+        {
             current_line.push_str(&(" ".to_owned() + word));
         } else {
             if current_line != indent {
