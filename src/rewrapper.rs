@@ -35,51 +35,71 @@ pub fn rewrap_lines(mut lines: Vec<Line>, diff_lines: usize, column_length: u8) 
     wrap_lines(unwrapped_lines, column_length)
 }
 
-fn open_exempt_tag(line: &str) -> &str {
-    const EXEMPT_TAGS: [&str; 7] = [
-        "<!--",
-        "<pre",
-        "<xmp",
-        "<style",
-        "<script",
-        "<svg",
-        "<table",
-    ];
+const EXEMPT_TAGS: [(&str, &str); 7] = [
+    ("<!--", "-->"),
+    ("<pre", "</pre>"),
+    ("<xmp", "</xmp>"),
+    ("<style", "</style>"),
+    ("<script", "</script>"),
+    ("<svg", "</svg>"),
+    ("<table", "</table>"),
+];
 
+// Returns the earliest exempt open tag in `line`, along with the byte index
+// just past it, or `None` if there is no such tag.
+fn find_open_exempt_tag(line: &str) -> Option<(&'static str, usize)> {
     EXEMPT_TAGS
         .iter()
-        .min_by_key(|&&tag| line.find(tag).unwrap_or(usize::MAX))
-        .filter(|&&tag| line.contains(tag))
-        .copied()
-        .unwrap_or("")
+        .filter_map(|&(open, _)| line.find(open).map(|index| (open, index)))
+        .min_by_key(|&(_, index)| index)
+        .map(|(open, index)| (open, index + open.len()))
 }
 
-fn contains_close_tag(open_tag: &str, line: &str) -> bool {
-    open_tag == "<!--" && line.contains("-->")
-        || open_tag == "<pre" && line.contains("</pre>")
-        || open_tag == "<xmp" && line.contains("</xmp>")
-        || open_tag == "<style" && line.contains("</style>")
-        || open_tag == "<script" && line.contains("</script>")
-        || open_tag == "<svg" && line.contains("</svg>")
-        || open_tag == "<table" && line.contains("</table>")
+fn close_exempt_tag(open_tag: &str) -> &'static str {
+    EXEMPT_TAGS
+        .iter()
+        .find(|&&(open, _)| open == open_tag)
+        .map(|&(_, close)| close)
+        .unwrap()
 }
 
 // This function exempts all of the lines appearing inside various blocks.
+//
+// Blocks are tracked positionally within a line, so that a block closing and
+// another opening on the same line (e.g., `--><!--`) is handled correctly, and
+// so that a close tag appearing *before* an open tag doesn't close the block
+// that the open tag starts. Without this, prose inside a multi-line comment
+// that merely mentions e.g. `<style>` would open a block that never closes.
 fn exempt_blocks(lines: &mut Vec<Line>) {
     let mut in_exempt_block: &str = "";
     for line in lines {
-        // Only assign `in_exempt_block` if we're *not* already in one.
-        if in_exempt_block.is_empty() {
-            in_exempt_block = open_exempt_tag(line.contents);
+        let mut exempt = !in_exempt_block.is_empty();
+        let mut rest: &str = line.contents;
+        loop {
+            if in_exempt_block.is_empty() {
+                match find_open_exempt_tag(rest) {
+                    Some((open_tag, end)) => {
+                        in_exempt_block = open_tag;
+                        exempt = true;
+                        rest = &rest[end..];
+                    }
+                    None => break,
+                }
+            }
+
+            // We're in an exempt block; see if it closes later on this line.
+            let close_tag = close_exempt_tag(in_exempt_block);
+            match rest.find(close_tag) {
+                Some(index) => {
+                    in_exempt_block = "";
+                    rest = &rest[index + close_tag.len()..];
+                }
+                None => break,
+            }
         }
 
-        // If we're in an exempt block, mark the line as exempt from formatting,
-        // and see if we've reached the close block.
-        if !in_exempt_block.is_empty() {
+        if exempt {
             line.should_format = false;
-            if contains_close_tag(in_exempt_block, line.contents) {
-                in_exempt_block = "";
-            }
         }
     }
 }
