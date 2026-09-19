@@ -1,0 +1,18 @@
+<p>A normal paragraph that should be formatted, and it is long enough that it needs to be wrapped by
+the rewrapper.</p>
+
+<!-- <li><p>A commented-out step that is intentionally omitted from the spec.</p></li> --><!-- The above is only here
+in case people think that the spec accidentally omitted it. It doesn't handle a <head> element containing a
+<noscript> which itself contains something other than a <link> or a <style> element; you'd expect that to break
+out of the <noscript> but it doesn't. -->
+
+<p>Another normal paragraph that should be formatted. It used to be left alone, because the comment
+above mentions an opening style tag and the rewrapper thought this line was part of a style
+sheet.</p>
+
+<pre>this should not be wrapped</pre> <pre>
+this should not be wrapped this should not be wrapped this should not be wrapped this should not be wrapped
+</pre>
+
+<p>One more normal paragraph that should be formatted. The line above closes one pre block and then
+opens another one on the same line.</p>
